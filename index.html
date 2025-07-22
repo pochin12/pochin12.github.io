@@ -2,36 +2,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yet Another Tetris Clone</title>
-    <script type="importmap">
-    {
-        "imports": {
-            "./modules/dom.js": "./modules/dom.js",
-            "./modules/renderer.js": "./modules/renderer.js",
-            "./modules/game.js": "./modules/game.js",
-            "./modules/constants.js": "./modules/constants.js",
-            "./modules/audio.js": "./modules/audio.js",
-            "nipplejs": "https://esm.sh/nipplejs"
-        }
-    }
-    </script>
-    <script type="module" src="init.js"></script>
+    <title>Mario Test World</title>
     <style>
         body {
             margin: 0;
             padding: 0;
-            overflow: hidden;
-            background: #000;
+            background: #5C94FC;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
         }
+        
         canvas {
-            border: 2px solid #fff;
+            width: 100vw;
+            height: 100vh;
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+        }
+        
+        .controls {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            color: white;
+            background: rgba(0,0,0,0.5);
+            padding: 10px;
+            border-radius: 5px;
+            z-index: 1000;
+        }
+        
+        .counters {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            color: white;
+            background: rgba(0,0,0,0.5);
+            padding: 10px;
+            border-radius: 5px;
+            z-index: 1000;
+            text-align: right;
+        }
+        
+        .coordinates {
+            position: fixed;
+            top: 40px;
+            left: 10px;
+            color: white;
+            background: rgba(0,0,0,0.5);
+            padding: 10px;
+            border-radius: 5px;
+            z-index: 1000;
         }
     </style>
 </head>
 <body>
+    <div class="controls">
+        <div>WASD / Arrow Keys: Move & Jump</div>
+        <div>Shift: Run</div>
+        <div>S / Down: Crouch</div>
+        <div>R / Right Bumper: Spin Jump</div>
+        <div>Gamepad: Left stick, A button, B button & Down (crouch)</div>
+    </div>
+    <div class="counters">
+        <div id="coinCounter">Coins: 0</div>
+        <div id="scoreCounter">Score: 0</div>
+    </div>
+    <div class="coordinates" id="coordinates">X: 0</div>
+    <canvas id="gameCanvas"></canvas>
+    <script type="module" src="game.js"></script>
 </body>
 </html>
