@@ -1,0 +1,37 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yet Another Tetris Clone</title>
+    <script type="importmap">
+    {
+        "imports": {
+            "./modules/dom.js": "./modules/dom.js",
+            "./modules/renderer.js": "./modules/renderer.js",
+            "./modules/game.js": "./modules/game.js",
+            "./modules/constants.js": "./modules/constants.js",
+            "./modules/audio.js": "./modules/audio.js",
+            "nipplejs": "https://esm.sh/nipplejs"
+        }
+    }
+    </script>
+    <script type="module" src="init.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        canvas {
+            border: 2px solid #fff;
+        }
+    </style>
+</head>
+<body>
+</body>
+</html>
