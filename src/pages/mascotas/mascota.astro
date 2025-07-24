@@ -1,0 +1,88 @@
+---
+import Layoutmenu from "../../layout/Layoutmenu.astro";
+import { turso } from "../../turso";
+import { getSession } from "auth-astro/server";
+
+const { rows } = await turso.execute(
+    "select id, nombre, descripcion, tamano, color,imagen from mascotas order by id desc",
+);
+console.log(rows);
+
+const session = await getSession(Astro.request);
+if (!session) {
+    return Astro.redirect("/");
+}
+
+import { Image } from "astro:assets";
+const imagenmascota =
+    "https://xfhervjdkhuawfstfqfp.supabase.co/storage/v1/object/public/pets-images/1753212742522.PNG";
+---
+
+<Layoutmenu>
+    {
+        rows.length === 0 ? (
+            <p>algun mensaje</p>
+        ) : (
+            <div class="container-fluid">
+                <div
+                    class="card m-0"
+                    style="max-height: 65vh; overflow-y: auto;"
+                >
+                    <div class="row">
+                        {rows.map((mascota) => (
+                            <div class="card w-50 p-2">
+                                <img
+                                    class=""
+                                    src={mascota.imagen}
+                                    class="card-img-top"
+                                    alt="..."
+                                />
+                                <div class="card-body p-1">
+                                    <h5 class="card-title">{mascota.nombre}</h5>
+                                    <p class="card-text">
+                                        {mascota.descripcion}
+                                    </p>
+                                    <p class="card-text">
+                                        Color:
+                                        {mascota.color}
+                                    </p>
+                                    <a
+                                        href={`/mascotas/${mascota.id}`}
+                                        class="btn btn-primary keychainify-checked"
+                                    >
+                                        Solicitar adopción
+                                    </a>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        )
+    }
+</Layoutmenu>
+<style>
+    .container-fluid {
+        /* Altura máxima del 70% del viewport height */
+        max-height: 100vh;
+        overflow-y: auto; /* Habilita el scroll vertical cuando el contenido excede max-height  */
+        padding-right: 15px; /* Espacio para la barra de scroll si está a la derecha */
+        box-sizing: border-box; /* Incluir padding en el tamaño total */
+        border: 3px solid #ffffff; /* Opcional: para visualizar el límite del contenedor */
+        border-radius: 8px;
+        background-color: #fcfcfc;
+        padding: 1rem;
+    }
+
+    /* Estilos de la grilla para los elementos */
+    .posts-grid {
+        display: grid;
+        gap: 1rem; /* Espacio entre las tarjetas */
+        padding: 0.5rem; /* Padding interno para que las tarjetas no toquen los bordes del scroll */
+    }
+
+    /* MOBILE-FIRST: Por defecto, una columna */
+    .posts-grid {
+        grid-template-columns: 1fr; /* Una columna para dispositivos pequeños */
+    }
+</style>

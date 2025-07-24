@@ -1,0 +1,269 @@
+---
+import type { NumberColumnInput } from "@astrojs/db/types";
+import Layout from "../../layout/Layoutmenu.astro";
+import { turso } from "../../turso";
+import { getSession } from "auth-astro/server";
+
+const session = await getSession(Astro.request);
+if (!session) {
+    return Astro.redirect("/");
+}
+
+interface User {
+    id: number;
+    nombre: string;
+    apellido: string;
+    correo: string;
+    telefono: number;
+}
+
+interface Mascotaconusuario {
+    mascota_id: number;
+    nombre_mascota: string;
+    usuario_id: number;
+    nombre_usuario: string;
+    apellido_usuario: string;
+    correo_usuario: string;
+    telefono_usuario: number;
+    color: string;
+    descripcion: string;
+    tamano: string;
+    edad: number;
+    sexo: numeric;
+}
+
+// interface Props {
+//     masc: Mascotaconusuario;
+// }
+
+const { id } = Astro.params;
+let user: User | undefined;
+let masc: Mascotaconusuario | undefined;
+
+console.log(id);
+
+try {
+    // Ejecuta la consulta con turso.execute
+    // Usa placeholders (?) para el ID y asegúrate de pasarlo en el array 'args'
+    const result = await turso.execute({
+        sql: "SELECT m.id AS mascota_id, m.nombre AS nombre_mascota, m.color, m.descripcion, m.edad, m.tamano, m.sexo, u.id AS usuario_id, u.nombre AS nombre_usuario, u.apellido AS apellido_usuario, u.correo AS correo_usuario, u.telefono AS telefono_usuario FROM mascotas AS m JOIN usuarios AS u ON m.id_u = u.id WHERE m.id = ?",
+        args: [id], // El ID viene como string de Astro.params, LibSQL lo convertirá si la columna es INTEGER
+        //"Select id, nombre"
+    });
+
+    console.log(typeof id);
+    // turso.execute devuelve un objeto con la propiedad 'rows'
+    // 'rows' es un array de arrays (si no usas objetos de fila) o un array de objetos.
+    // Si tu cliente libsql está configurado para devolver objetos (recomendado con `columnNames: true` en la configuración del cliente),
+    // entonces result.rows[0] será directamente un objeto con las propiedades nombre, apellido, etc.
+
+    // Asegúrate de que result.rows exista y no esté vacío
+    if (result.rows && result.rows.length > 0) {
+        // Si tu cliente turso está configurado para retornar objetos:
+        masc = result.rows[0] as Mascotaconusuario;
+        // Si tu cliente turso retorna arrays (por defecto sin configuración extra):
+        // Tendrías que mapear el array a un objeto User, por ejemplo:
+        // const row = result.rows[0];
+        // user = {
+        //   id: row[0] as number,
+        //   nombre: row[1] as string,
+        //   apellido: row[2] as string,
+        //   correo: row[3] as string,
+        //   telefono: row[4] as number, // O row[4] as string si es TEXT
+        // };
+    }
+} catch (error) {
+    console.error(`Error al obtener el usuario con ID ${id}:`, error);
+    // Puedes redirigir a una página de error genérica o 404 aquí también
+}
+// Si el usuario no se encuentra, puedes redirigir o mostrar un mensaje de error
+// Si el usuario no se encuentra, redirige o muestra un mensaje de error
+if (!masc) {
+    return Astro.redirect("/404"); // Asegúrate de tener src/pages/404.astro
+}
+
+// Puedes pasar la prop 'user' a la plantilla
+// O puedes acceder directamente a 'user' en el HTML si prefieres
+// (ya que está definida en el frontmatter)
+---
+
+<Layout title={"Detalles de ${masc.nombre_mascota}"}>
+    <!-- <form action="/api/solicitudes" method="POST">
+        <input type="hidden" name="id_mascota" value={masc.mascota_id} />
+
+        <input type="hidden" name="id_usuario" value={masc.nombre_usuario} />
+        {/* EJEMPLO: ESTO ES INSEGURO SI NO HAY AUTENTICACIÓN */}
+
+        <p>
+            ¿Estás seguro de que deseas solicitar la adopción de esta mascota?
+        </p>
+        <button type="submit" class="btn btn-success"
+            >Confirmar Solicitud</button
+        >
+        <a href={`/mascotas/${masc.mascota_id}`} class="btn btn-secondary"
+            >Cancelar</a
+        >
+    </form> -->
+    <div class="container my-4">
+        <div class="card p-4 shadow-sm">
+            <h1 class="card-title mb-3">Detalles de {masc.nombre_mascota}</h1>
+
+            <div class="mb-3">
+                <strong>Nombre del responsable:</strong>
+                {masc.nombre_usuario}
+            </div>
+            <div class="mb-3">
+                <strong>Color:</strong>
+                {masc.color}
+            </div>
+            <div class="mb-3">
+                <strong>Descripcion:</strong>
+                {masc.descripcion}
+            </div>
+            <div class="mb-3">
+                <strong>Tamaño:</strong>
+                {masc.tamano}
+            </div>
+            <div class="mb-3">
+                <strong>Sexo:</strong>
+                {masc.sexo}
+            </div>
+            <div class="mb-3">
+                <strong>Edad:</strong>
+                {masc.edad}
+            </div>
+
+            <a href="/mascotas/mascota" class="btn btn-primary mt-3"
+                >Volver a la lista</a
+            >
+            <a
+                href={`/mascotas/solicitud/${masc}`}
+                class="btn btn-primary keychainify-checked"
+            >
+                Solicitar adopción
+            </a>
+            <a
+                href={`/mascotas/solicitud/${masc.mascota_id}?nombre=${encodeURIComponent(masc.nombre_mascota)}&color=${encodeURIComponent(masc.color)}`}
+                class="btn btn-primary keychainify-checked"
+            >
+                Solicitar adopción
+            </a>
+            <!-- en este caso podemos pasar varios parametros a una nueva pagina y se pueden insertar de manera tradicional con un formulario y metodo post aprovechamos un subconjunto de los datos de la consulta actual siempre que no necesitemos muchos datos porque puede volverse lento.
+             para utilizar un modal y no redirigir debe hacerse con js del lado del cliente y se utiliza con fetch, en este caso obtenemos los datos directamente de esta pagina sin recargar -->
+        </div>
+    </div>
+
+    <button id="openModalBtn" class="btn btn-primary mt-3"
+        >Solicitar Adopción</button
+    >
+
+    <div
+        id="adoptionModal"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;"
+    >
+        <div
+            class="modal-content"
+            style="background: white; padding: 20px; border-radius: 8px; width: 400px;"
+        >
+            <h2>Confirmar Solicitud de Adopción</h2>
+            <p>
+                ¿Estás seguro de que deseas solicitar la adopción de **{
+                    masc.nombre_mascota
+                }**?
+            </p>
+            <p>
+                Dueño actual: {masc.nombre_usuario}
+                {masc.apellido_usuario}
+            </p>
+
+            <form id="adoptionForm">
+                <input
+                    type="hidden"
+                    name="id_mascota"
+                    value={masc.mascota_id}
+                />
+                <input
+                    type="hidden"
+                    name="id_usuario"
+                    value={masc.usuario_id}
+                />
+
+                <button type="submit" class="btn btn-success">Confirmar</button>
+                <button
+                    type="button"
+                    id="closeModalBtn"
+                    class="btn btn-secondary">Cancelar</button
+                >
+            </form>
+            <div id="formStatus" style="margin-top: 10px; color: red;"></div>
+        </div>
+    </div>
+
+    <script
+        define:vars={{
+            mascotaId: masc.mascota_id,
+            mascotaNombre: masc.nombre_mascota,
+        }}
+    >
+        const openModalBtn = document.getElementById("openModalBtn");
+        const closeModalBtn = document.getElementById("closeModalBtn");
+        const adoptionModal = document.getElementById("adoptionModal");
+        const adoptionForm = document.getElementById("adoptionForm");
+        const formStatus = document.getElementById("formStatus");
+
+        openModalBtn.addEventListener("click", () => {
+            adoptionModal.style.display = "flex"; // Usar flex para centrar
+        });
+
+        closeModalBtn.addEventListener("click", () => {
+            adoptionModal.style.display = "none";
+        });
+
+        adoptionForm.addEventListener("submit", async (event) => {
+            event.preventDefault(); // Evita la recarga de la página por defecto
+
+            formStatus.textContent = "Enviando solicitud...";
+            formStatus.style.color = "blue";
+
+            const formData = new FormData(adoptionForm);
+            // Puedes convertir FormData a un objeto plano si prefieres enviar JSON
+            //const data = Object.fromEntries(formData.entries());
+            //const data es si trabajo con json de ambos lados.
+
+            try {
+                const response = await fetch("/api/solicitudes", {
+                    // URL de tu endpoint API
+                    method: "POST",
+                    // headers: {
+                    //     "Content-Type": "application/json", // Si envías JSON
+                    // },
+                    //body: JSON.stringify(data), // Si envías JSON
+                    // O si quieres enviar FormData directamente:
+                    body: formData,
+                });
+                //en content-type application json debo tener cuidado y control de recibir lo mismo en post.ts o js
+                //el servidor intenta llamar a request.formData() con el post.ts pero por el metodo post de aca me dara un error, 500 como lo configure
+
+                if (response.ok) {
+                    formStatus.textContent = `¡Solicitud de adopción para ${mascotaNombre} enviada con éxito!`;
+                    formStatus.style.color = "green";
+                    // Opcional: Cerrar modal después de un tiempo o redirigir
+                    setTimeout(() => {
+                        adoptionModal.style.display = "none";
+                        window.location.href = `/mascotas/${mascotaId}?solicitud=success`; // Redirigir si quieres
+                        //window.location.reload(); recargar para ver actualizacion
+                    }, 2000);
+                } else {
+                    const errorData = await response.json();
+                    formStatus.textContent = `Error: ${errorData.error || "Algo salió mal."}`;
+                    formStatus.style.color = "red";
+                }
+            } catch (error) {
+                console.error("Error al enviar la solicitud:", error);
+                formStatus.textContent =
+                    "Error de conexión. Inténtalo de nuevo.";
+                formStatus.style.color = "red";
+            }
+        });
+    </script>
+</Layout>

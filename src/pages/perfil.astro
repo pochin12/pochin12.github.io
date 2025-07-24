@@ -1,0 +1,34 @@
+---
+import Layoutmenu from "../layout/Layoutmenu.astro";
+
+import { getSession } from "auth-astro/server";
+const session = await getSession(Astro.request);
+if (!session) {
+    return Astro.redirect("/");
+}
+---
+
+<Layoutmenu>
+    <div class="container-fluid">
+        <div class="d-grid gap-3 col-8 mx-auto m-3">
+            <h3>Mascotas de {session.user?.name}</h3>
+            <button class="btn btn-primary btn-lg" type="button"
+                ><a class="link-light link-underline" href="/publicar-mascota"
+                    >Publicar para adoptar</a
+                ></button
+            >
+            <button class="btn btn-primary btn-lg" type="button"
+                >Adopciones</button
+            >
+            <button class="btn btn-primary btn-lg" type="button"
+                >Mensajes</button
+            >
+            <button class="btn btn-primary btn-lg" type="button">
+                <a
+                    class="link-light link-underline"
+                    href="/solicitudes-de-adopcion">Solicitudes de adopción</a
+                ></button
+            >
+        </div>
+    </div>
+</Layoutmenu>
