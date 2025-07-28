@@ -15,5 +15,13 @@ export const POST: APIRoute = async ({
                 headers: { 'Content-Type': 'application/json' },
             });
         }
+    } catch (error) {
+        // Este catch capturará el error si turso.execute falla
+        console.error('Error al cargar la mascota:', error);
+        return new Response(JSON.stringify({ error: 'Fallo al registrar.' }), {
+            status: 500,
+            headers: { 'Content-Type': 'application/json' },
+        });
     }
+
 }

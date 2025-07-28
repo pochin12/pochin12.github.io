@@ -26,5 +26,5 @@ export const POST: APIRoute = async ({ request, redirect }) => {
             headers: { 'Content-Type': 'application/json' },
         });
     }
- 
+
 }
