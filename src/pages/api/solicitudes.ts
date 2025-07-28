@@ -1,6 +1,13 @@
 // src/pages/api/solicitudes.ts
 import type { APIRoute } from 'astro';
 import { turso } from '../../turso';
+// import { getSession } from 'auth-astro/server';
+// const session = await getSession(Astro.request);
+
+// if (!session) {
+//     return Astro.redirect("/");
+// }
+// console.log(session.user?.email);
 
 export const POST: APIRoute = async ({ request, redirect }) => {
     try {
@@ -9,7 +16,12 @@ export const POST: APIRoute = async ({ request, redirect }) => {
         //const idMascotaStr = body.id_mascota?.toString() y demas variables a declarar
         const formData = await request.formData();
         const idMascotaStr = formData.get('id_mascota')?.toString();
-        const idUsuarioStr = formData.get('id_usuario')?.toString();
+        const idUsuarioStr = formData.get('id_responsable')?.toString();
+        const nombreUsuario = formData.get('nombre_usuario');
+        const idSolicitanteStr = formData.get('id_solicitante')?.toString();
+        const nombreSolicitante = formData.get('nombre_solicitante');
+        const apellido_solicitante = formData.get('apellido_solicitante');
+        const correo_solicitante = formData.get('correoSolicitante');
         
 
         if (!idMascotaStr || !idUsuarioStr) {
@@ -21,6 +33,8 @@ export const POST: APIRoute = async ({ request, redirect }) => {
 
         const idMascota = parseInt(idMascotaStr);
         const idUsuario = parseInt(idUsuarioStr);
+        const idSolicitante = parseInt(idSolicitanteStr);
+        const estado = 'pendiente';
 
         const now = new Date();
         // Formatea a 'YYYY-MM-DD HH:MM:SS' para SQLite
@@ -38,8 +52,8 @@ export const POST: APIRoute = async ({ request, redirect }) => {
         // --- Lógica para INSERTAR en tu tabla 'adopciones' ---
         // Asumiendo que tienes una tabla 'adopciones' con columnas id_mascota, id_usuario, fecha_solicitud
         await turso.execute({
-            sql: "INSERT INTO adopciones (id_usuario, id_mascota, fecha_solicitud) VALUES (?, ?, ?)",
-            args: [idUsuario, idMascota, fechaSolicitud]
+            sql: "INSERT INTO solicitudes (id_mascota, id_responsable, nombre_usuario, fecha_solicitud, estado, id_solicitante, nombre_solicitante) VALUES (?, ?, ?, ?, ?, ?, ?)",
+            args: [idMascota, idUsuario, nombreUsuario, fechaSolicitud, estado, idSolicitante, nombreSolicitante],
         });
 
         // Redirige a la página de confirmación o a la lista de mascotas

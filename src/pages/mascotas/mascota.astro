@@ -3,25 +3,30 @@ import Layoutmenu from "../../layout/Layoutmenu.astro";
 import { turso } from "../../turso";
 import { getSession } from "auth-astro/server";
 
-const { rows } = await turso.execute(
-    "select id, nombre, descripcion, tamano, color,imagen from mascotas order by id desc",
-);
-console.log(rows);
-
 const session = await getSession(Astro.request);
 if (!session) {
     return Astro.redirect("/");
 }
 
-import { Image } from "astro:assets";
-const imagenmascota =
-    "https://xfhervjdkhuawfstfqfp.supabase.co/storage/v1/object/public/pets-images/1753212742522.PNG";
+const correousuario = session.user?.email;
+
+const { rows } = await turso.execute(
+    "select id, nombre, descripcion, tamano, color, imagen from mascotas order by id desc",
+);
+console.log(rows);
+
+const resultUser = await turso.execute({
+    sql: "select correo from usuarios where correo = ?",
+    args: [correousuario]
+});
+
+console.log(resultUser.rows.length > 0)
 ---
 
 <Layoutmenu>
     {
-        rows.length === 0 ? (
-            <p>algun mensaje</p>
+        rows.length === 0 ?(
+            <p>Debe tener un usuario para adoptar</p>
         ) : (
             <div class="container-fluid">
                 <div
@@ -32,7 +37,7 @@ const imagenmascota =
                         {rows.map((mascota) => (
                             <div class="card w-50 p-2">
                                 <img
-                                    class=""
+                                    class="card-imagen"
                                     src={mascota.imagen}
                                     class="card-img-top"
                                     alt="..."

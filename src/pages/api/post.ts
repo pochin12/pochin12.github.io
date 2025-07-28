@@ -2,6 +2,7 @@ import type { APIRoute } from "astro";//para archivos de endpoint .js o ts
 //si es una pagina .astro tiene frontmatter y no necesita este apiroute
 import { turso } from "../../turso";
 
+
 export const POST: APIRoute = async ({ request, redirect }) => {
     try {
         const formData = await request.formData();

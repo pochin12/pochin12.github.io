@@ -9,6 +9,8 @@ if (!session) {
     return Astro.redirect("/");
 }
 
+const correoSolicitante = session.user?.email;
+
 interface User {
     id: number;
     nombre: string;
@@ -32,6 +34,12 @@ interface Mascotaconusuario {
     sexo: numeric;
 }
 
+interface Solicitante {
+    id: number;
+    nombre: string;
+    apellidoe: string;
+}
+
 // interface Props {
 //     masc: Mascotaconusuario;
 // }
@@ -39,8 +47,12 @@ interface Mascotaconusuario {
 const { id } = Astro.params;
 let user: User | undefined;
 let masc: Mascotaconusuario | undefined;
+let solicitante: Solicitante | undefined;
 
-console.log(id);
+if (!session) {
+    return Astro.redirect("/");
+}
+console.log(session.user?.email);
 
 try {
     // Ejecuta la consulta con turso.execute
@@ -51,7 +63,6 @@ try {
         //"Select id, nombre"
     });
 
-    console.log(typeof id);
     // turso.execute devuelve un objeto con la propiedad 'rows'
     // 'rows' es un array de arrays (si no usas objetos de fila) o un array de objetos.
     // Si tu cliente libsql está configurado para devolver objetos (recomendado con `columnNames: true` en la configuración del cliente),
@@ -72,6 +83,16 @@ try {
         //   telefono: row[4] as number, // O row[4] as string si es TEXT
         // };
     }
+    const resultUser = await turso.execute({
+        sql: "select id, nombre, apellido from usuarios where correo = ?",
+        args: [correoSolicitante],
+    });
+
+    if (resultUser.rows.length > 0) {
+        solicitante = resultUser.rows[0] as Solicitante;
+    }
+
+    console.log(solicitante.id)
 } catch (error) {
     console.error(`Error al obtener el usuario con ID ${id}:`, error);
     // Puedes redirigir a una página de error genérica o 404 aquí también
@@ -104,6 +125,7 @@ if (!masc) {
             >Cancelar</a
         >
     </form> -->
+
     <div class="container my-4">
         <div class="card p-4 shadow-sm">
             <h1 class="card-title mb-3">Detalles de {masc.nombre_mascota}</h1>
@@ -137,12 +159,6 @@ if (!masc) {
                 >Volver a la lista</a
             >
             <a
-                href={`/mascotas/solicitud/${masc}`}
-                class="btn btn-primary keychainify-checked"
-            >
-                Solicitar adopción
-            </a>
-            <a
                 href={`/mascotas/solicitud/${masc.mascota_id}?nombre=${encodeURIComponent(masc.nombre_mascota)}&color=${encodeURIComponent(masc.color)}`}
                 class="btn btn-primary keychainify-checked"
             >
@@ -175,6 +191,8 @@ if (!masc) {
                 Dueño actual: {masc.nombre_usuario}
                 {masc.apellido_usuario}
             </p>
+            <p>Correo del responsable: {masc.correo_usuario}</p>
+            <p>mi correo: {session.user?.email}</p>
 
             <form id="adoptionForm">
                 <input
@@ -184,8 +202,33 @@ if (!masc) {
                 />
                 <input
                     type="hidden"
-                    name="id_usuario"
+                    name="id_responsable"
                     value={masc.usuario_id}
+                />
+                <input
+                    type="hidden"
+                    name="nombre_usuario"
+                    value={masc.nombre_usuario}
+                />
+                <input
+                    type="hidden"
+                    name="id_solicitante"
+                    value={solicitante.id}
+                />
+                <input
+                    type="hidden"
+                    name="nombre_solicitante"
+                    value={solicitante.nombre}
+                />
+                <input
+                    type="hidden"
+                    name="apellido_solicitante"
+                    value={solicitante.apellido}
+                />
+                <input
+                    type="hidden"
+                    name="correo_solicitante"
+                    value={correoSolicitante}
                 />
 
                 <button type="submit" class="btn btn-success">Confirmar</button>
