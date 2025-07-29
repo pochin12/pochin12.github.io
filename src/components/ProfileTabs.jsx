@@ -193,26 +193,31 @@ const ProfileTabs = ({ userEmail }) => {
                             <div>
                                 <h4>Formulario para publicar</h4>
                                 
-                                <form action="/api/perfil/post-mascota" method="POST">
+                                <form action="/api/perfil/post-mascota?userEmail=${userEmail}" method="POST">
                                     <h2>Cargar datos de mascota para adopcion</h2>
+                
                                     <div class="form-floating">
-                                        <input type="password" class="form-control" id="floatingPassword" placeholder="Password" required/>
-                                            <label for="floatingPassword">Password</label>
-                                    </div>
-                                    <div class="form-floating">
-                                        <input type="text" class="form-control" id="nombre" placeholder='ingrese'></input>
+                                        <input type="text" class="form-control" id="nombre" placeholder='ingrese' name="nombre"></input>
                                         <label for="nombre">Nombre:</label>
                                     </div>
+                                    <div className="form-floating">
+                                        <select class="form-select mb-3 w-75" id="tipo" name="tipo">
+                                            <option value="perro">Perro</option>
+                                            <option value="gato">Gato</option>
+
+                                        </select>
+                                        <label for="tamano">Tipo de mascota</label>
+                                    </div>
                                     <div class="form-floating">
-                                        <input type="text" class="form-control" id="color" placeholder='arena'></input>
+                                        <input type="text" class="form-control" id="color" name="color" placeholder='arena'></input>
                                         <label for="color">Color:</label>
                                     </div>  
                                     <div className="form-floating">
-                                        <input type="number" class="form-control" id="edad" placeholder='edad' />
+                                        <input type="number" class="form-control" id="edad" name="edad" placeholder='edad' />
                                         <label for="edad">Edad:</label>
                                     </div>
                                     <div className="form-floating">
-                                        <select class="form-select mb-3 w-75" id="tamano">
+                                        <select class="form-select mb-3 w-75" id="tamano" name="tamano">
                                             <option value="chico">Chico</option>
                                             <option value="mediano">Mediano</option>
                                             <option value="grande">Grande</option>
@@ -220,20 +225,24 @@ const ProfileTabs = ({ userEmail }) => {
                                         <label for="tamano">Seleccione el tamaño</label>
                                     </div>
                                     <div className="form-floating">
-                                        <select class="form-select mb-3 w-75" id="sexo">
+                                        <select class="form-select mb-3 w-75" id="sexo" name="sexo">
                                             <option value="">Seleccione una</option>
-                                            <option value="chico">Macho</option>
-                                            <option value="mediano">Hembra</option>
+                                            <option value="M">Macho</option>
+                                            <option value="H">Hembra</option>
                                             
                                         </select>
                                         <label for="sexo">Sexo:</label>
                                     </div>
                                     <div class="form-floating border-success">
-                                        <input type="text" class="form-control" id="castrado" placeholder=''></input>
+                                        <input type="text" class="form-control" id="castrado" name="castrado" placeholder=''></input>
                                         <label for="castrado">Castrado: si-no</label>
                                     </div>
+                                    <div class="form-floating border-success">
+                                        <input type="text" class="form-control" id="imagen" name="imagen" placeholder='imagen'></input>
+                                        <label for="imagen">Imagen</label>
+                                    </div>
                                     <div class="form-floating">
-                                        <textarea type="text" class="form-control" id="descripcion" placeholder=''></textarea>
+                                        <textarea type="text" class="form-control" id="descripcion" name="descripcion" placeholder=''></textarea>
                                         <label for="descripcion">Descripción:</label>
                                     </div>
 
