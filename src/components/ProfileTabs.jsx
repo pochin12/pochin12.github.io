@@ -193,7 +193,7 @@ const ProfileTabs = ({ userEmail }) => {
                             <div>
                                 <h4>Formulario para publicar</h4>
                                 
-                                <form action="/api/perfil/post-mascota?userEmail=${userEmail}" method="POST">
+                                <form action="/api/perfil/post-mascota" method="POST">
                                     <h2>Cargar datos de mascota para adopcion</h2>
                 
                                     <div class="form-floating">

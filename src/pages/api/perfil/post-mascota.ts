@@ -2,13 +2,6 @@ import type { APIRoute } from "astro";
 import { turso } from "../../../turso";
 import { getSession } from "auth-astro/server";
 
-const session = await getSession(Astro.request);
-if (!session) {
-    return Astro.redirect("/");
-}
-
-const correoSolicitante = session.user?.email;
-
 
 export const POST: APIRoute = async ({ request, redirect }) => {
     try {
@@ -25,7 +18,7 @@ export const POST: APIRoute = async ({ request, redirect }) => {
         const castrado = formData.get('castrado');
 
         await turso.execute({
-            sql: "insert into mascotas (nombre, tipo, color, tamano, edad, sexo, descripcion, id_u, imagen, castrado) VALUES (?,?,?,?,?,?,?, ?, ?, ?)",
+            sql: "insert into mascotas (nombre, tipo, color, tamano, edad, sexo, descripcion, id_u, imagen, castrado) VALUES (?,?,?,?,?,?,?,?,?,?)",
             args: [nombre, tipo, color, tamano, edad, sexo, descripcion, id_usuario, imagen, castrado],
         });
 
