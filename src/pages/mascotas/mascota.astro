@@ -17,7 +17,7 @@ const tipo = url.searchParams.get("tipo");
 
 try {
     const datos = await turso.execute(
-        "select id, nombre, descripcion, tamano, tipo, imagen, color, sexo from mascotas",
+        "select id, nombre, descripcion, tamano, tipo, imagen, color, edad, sexo from mascotas",
     );
 
     listadomascotas = datos.rows.map((row) => ({

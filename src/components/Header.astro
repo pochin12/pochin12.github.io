@@ -1,56 +1,51 @@
-<ul class="nav nav-underline">
-    <li class="nav-item">
-        <a class="nav-link" aria-current="page" href="/login">Inicio</a>
-    </li>
-    <li class="nav-item dropdown">
-        <a
-            class="nav-link"
-            data-bs-toggle="dropdown"
-            href="/mascotas/mascota"
-            role="button"
-            aria-expanded="false">Mascotas</a
-        >
-        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <li>
-                <a class="dropdown-item" href="/mascotas/mascota?tipo=perro">Perros</a>
-            </li>
-            <li><a class="dropdown-item" href="/mascotas/mascota?tipo=gato">Gatos</a></li>
-        </ul>
-    </li>
-    <li class="nav-item dropdown">
-        <a
-            class="nav-link"
-            data-bs-toggle="dropdown"
-            href="#"
-            role="button"
-            aria-expanded="false">Servicios</a
-        >
-        <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="#">Refugios</a></li>
-            <li><a class="dropdown-item" href="#">Veterinarios</a></li>
-            <li><a class="dropdown-item" href="#">Eventos</a></li>
-            <li><hr class="dropdown-divider" /></li>
-            <li><a class="dropdown-item" href="#">Separated link</a></li>
-        </ul>
-    </li>
-    <li class="nav-item">
-        <a
-            class="nav-link"
-            data-bs-toggle="dropdown"
-            href="#"
-            role="button"
-            aria-expanded="false">Perfil</a
-        >
-        <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="/perfil">Mis datos</a></li>
-            <li><a class="dropdown-item" href="#">Publicar para adoptar</a></li>
-            <li>
-                <a class="dropdown-item" href="#">Solicitudes pendientes</a>
-            </li>
-            <li><a class="dropdown-item" href="#">Adoptados</a></li>
-        </ul>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link disabled" aria-disabled="true">Disabled</a>
-    </li>
-</ul>
+<nav class="header">
+    <nav class="navbar">
+        <div class="container-fluid">
+            <div class="topnav" id="navbarNav">
+                <ul class="nav">
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="/login"
+                            >Inicio <i class="bi bi-house-door-fill"></i></a
+                        >
+                    </li>
+                    <li class="nav-item">
+                        <a
+                            class="nav-link"
+                            aria-current="page"
+                            href="/mascotas/mascota"
+                            >Mascotas <i class="fa-solid fa-paw"></i></a
+                        >
+                    </li>
+                    <li class="nav-item">
+                        <a
+                            class="nav-link disabled"
+                            aria-current="page"
+                            href="/servicios"
+                            >Servicios <i class="fa-solid fa-circle-info"
+                            ></i></a
+                        >
+                    </li>
+                    <li class="nav-item">
+                        <a href="/perfil" class="nav-link"
+                            >Perfil <i class="fa-solid fa-user"></i></a
+                        >
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</nav>
+<style>
+    .header {
+        /* width: 100%; */
+        background-color: #eccfcf;
+        border-top: 1px solid #ddd;
+        display: flex;
+        /* justify-content: space-around; */
+        /* Distribuye los iconos */
+        padding: 15px 0;
+    }
+    .topnav {
+        background-color: #eccfcf;
+    }
+</style>

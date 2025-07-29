@@ -20,7 +20,7 @@ const ProfileTabs = ({ userEmail }) => {
                     //debe coincidir con el nombre en el endpoint searchParams.get('userEmail')
                     break;
                 case 'publicarMascota':
-                    setData({ message: "Formulario para publicar una mascota.." });
+                    setData({ message: "Cargar datos de mascota para adopción" });
                     setLoading(false);
                     return;
                 case 'adopciones':
@@ -87,7 +87,7 @@ const ProfileTabs = ({ userEmail }) => {
             </select> */}
             <div className="dropdown">
                 <button
-                    className="btn btn-primary dropdown-toggle btn-lg" // Clases de Bootstrap para el botón
+                    className="btn btn-sueccess dropdown-toggle" // Clases de Bootstrap para el botón
                     type="button"
                     id="profileDropdown" // Un ID único para el botón
                     data-bs-toggle="dropdown"
@@ -191,10 +191,9 @@ const ProfileTabs = ({ userEmail }) => {
                         )}
                         {activeTab === 'publicarMascota' && (
                             <div>
-                                <h4>Formulario para publicar</h4>
+                                <h4>Cargar datos de mascota para adopción</h4>
                                 
                                 <form action="/api/perfil/post-mascota" method="POST">
-                                    <h2>Cargar datos de mascota para adopcion</h2>
                 
                                     <div class="form-floating">
                                         <input type="text" class="form-control" id="nombre" placeholder='ingrese' name="nombre"></input>

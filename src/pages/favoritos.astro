@@ -2,6 +2,8 @@
 import Layoutmenu from "../layout/Layoutmenu.astro";
 import SelectToRadio from "../components/SelectToRadio";
 import React, { useState } from "react";
+import Iconos from "../components/iconos.astro";
+
 
 import { getSession } from "auth-astro/server";
 const session = await getSession(Astro.request);
@@ -11,5 +13,5 @@ if (!session) {
 ---
 
 <Layoutmenu>
-    
+    <Iconos></Iconos>
 </Layoutmenu>

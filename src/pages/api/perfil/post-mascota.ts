@@ -1,6 +1,6 @@
 import type { APIRoute } from "astro";
 import { turso } from "../../../turso";
-import { getSession } from "auth-astro/server";
+
 
 
 export const POST: APIRoute = async ({ request, redirect }) => {
