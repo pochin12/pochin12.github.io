@@ -1,0 +1,84 @@
+---
+import { turso } from "../../../turso";
+import Layoutmenu from "../../../layout/Layoutmenu.astro";
+
+//src/páginas/recursos/[recurso]/[id].astro
+
+// export const prerender = false; // Not needed in 'server' mode
+// const { resource, id } = Astro.params;
+
+// 
+
+interface adoptarMascota {
+    id: number;
+    id_u: number;
+    id_m: number;
+}
+
+const { mascota_id } = Astro.params;
+
+let masc: adoptarMascota | undefined;
+
+const nombreMascota = Astro.url.searchParams.get("nombre");
+const colorMascota = Astro.url.searchParams.get("color");
+//.url.searchParams.get() obtiene los parametros pasados como
+
+const { rows } = await turso.execute("select nombre from mascotas");
+
+console.log({ rows });
+
+// try {
+//     const result = await turso.execute({
+//         sql: "select id as id_m, id_u from mascotas where id_m = ?",
+//         args: [id],
+//     });
+//     if (result.rows && result.rows.length > 0) {
+//         masc = result.rows[0] as adoptarMascota
+//     }
+// } catch (error) {
+//     console.error(`Error al obtener el usuario con ID ${id}:`, error);
+// }
+// try {
+//     const result = await turso.execute({
+//         sql: "select * from mascotas where id = ?",
+//         args: [mascota_id],
+//     });
+//     console.log(result);
+
+//     if (result.rows && result.rows.length > 0) {
+//         // Si tu cliente turso está configurado para retornar objetos:
+//         masc = result.rows[0] as adoptarMascota;
+//         // Si tu cliente turso retorna arrays (por defecto sin configuración extra):
+//         // Tendrías que mapear el array a un objeto User, por ejemplo:
+//         // const row = result.rows[0];
+//         // user = {
+//         //   id: row[0] as number,
+//         //   nombre: row[1] as string,
+//         //   apellido: row[2] as string,
+//         //   correo: row[3] as string,
+//         //   telefono: row[4] as number, // O row[4] as string si es TEXT
+//         // };
+//     }
+// } catch (error) {
+//     console.error(`Error al obtener el usuario con ID ${mascota_id}:`, error);
+//     // Puedes redirigir a una página de error genérica o 404 aquí también
+// }
+// // Si el usuario no se encuentra, puedes redirigir o mostrar un mensaje de error
+// // Si el usuario no se encuentra, redirige o muestra un mensaje de error
+// if (!masc) {
+//     return Astro.redirect("/404"); // Asegúrate de tener src/pages/404.astro
+// }
+
+// await turso.execute({
+//     sql: "INSERT INTO adoptar (nombre, apellido, correo, telefono) VALUES (?, ?, ?, ?)",
+//     // Asegúrate de que los tipos coincidan con las columnas de tu DB
+//     // Si 'telefono' es TEXT en tu DB, pasa `tel.toString()` sin parseInt
+//     args: [nombre, apellido, correo, telefono],
+// });
+
+// await turso.execute
+---
+
+<Layoutmenu>
+    <!-- <p>{rows.map((row) => <h4>{row.nombre}</h4>)}</p> -->
+</Layoutmenu>

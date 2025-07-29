@@ -1,0 +1,67 @@
+---
+import Layoutmenu from "../layout/Layoutmenu.astro";
+import { turso } from "../turso";
+
+
+interface solicitudes {
+    id_solicitud: number;
+    id_usuario: number;
+    id_mascota: number;
+    fecha_solicitud: numeric;
+    estado: Text;
+}
+
+let solicitud: solicitudes | undefined;
+
+const {rows} = await turso.execute(
+    "select id, id_usuario, id_mascota, fecha_solicitud, estado from adopciones where id_usuario = 7 order by fecha_solicitud desc",
+);
+console.log(rows);
+
+// try {
+//     const result = await turso.execute({
+//         sql: "select * from adopciones where id_usuario = ?",
+//         args: [6],
+//     });
+
+//     if (result.rows && result.rows.length > 0) {
+//         solicitud = result.rows[0] as solicitudes;
+//     }
+
+//     console.log(result.rows);
+// } catch (error) {
+//     console.error(`Error al obtener el usuario con ID 6:`, error);
+// }
+
+// if (!solicitud) {
+//     return Astro.redirect("/404"); // Asegúrate de tener src/pages/404.astro
+// }
+---
+
+<Layoutmenu>
+    <div class="container-fluid pt-3">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Usuario</th>
+                    <th scope="col">Mascota</th>
+                    <th scope="col">Fecha solicitud</th>
+                    <th scope="col">Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                {rows.map((row) => (
+                        <tr>
+                            <th scope="">{row.id}</th>
+                            <td>{row.id_usuario}</td>
+                            <td>{row.id_mascota}</td>
+                            <td>{row.fecha_solicitud}</td>
+                            <td>{row.estado}</td>
+                        </tr>
+                    ))
+                }
+            </tbody>
+        </table>
+    </div>
+</Layoutmenu>

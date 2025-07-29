@@ -1,25 +1,13 @@
 ---
-import "../../src/styles/global.css";
-import Footer from "../components/Footer.astro";
-import Header from "../components/Header.astro";
-
-import { turso } from "../turso";
+import { SignIn, SignOut } from "auth-astro/components";
 
 import { getSession } from "auth-astro/server";
 
 const session = await getSession(Astro.request);
-if (!session) {
-    return Astro.redirect("/");
+
+if (session) {
+    return Astro.redirect("/login");
 }
-
-
-
-//const { rows } = await turso.execute("select * from usuarios");
-// solo ocupamos en la pagina usuario para listar, no necesitamos siempre que se renderiza toda la pagina
-
-// import { getSession } from "auth-astro/server";
-// const session = await getSession(Astro.request);
-const { children } = Astro.props;
 ---
 
 <!doctype html>
@@ -50,17 +38,16 @@ const { children } = Astro.props;
         <title>Astro Basics</title>
     </head>
     <body>
-        <Header>
-            
-        </Header>
-        <main>
-            <slot />
-        </main>
-
-        <!-- <footer>
-			<p>&copy;</p>
-			<p>Horario base de datos: {currentTime}</p>
-		</footer> -->
-        <Footer />
+        <h1>Bienvenido</h1>
+        <h3>por favor inicie sesion para continuar</h3>
+        
+        <>
+        <SignIn provider="google">iniciar con google</SignIn>
+        </>
+        
+        <footer>
+            <p>&copy;</p>
+            <p>Horario base de datos:</p>
+        </footer>
     </body>
 </html>

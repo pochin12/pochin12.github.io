@@ -1,0 +1,51 @@
+---
+import Layoutmenu from "../layout/Layoutmenu.astro";
+import ProfileTabs from "../components/ProfileTabs";
+import { getSession } from "auth-astro/server";
+const session = await getSession(Astro.request);
+if (!session) {
+    return Astro.redirect("/");
+}
+console.log(session.user?.email);
+---
+
+<Layoutmenu>
+    <!--//si trabajo con paginas, primer formato hecho 
+    <div class="container-fluid">
+        <div class="d-grid gap-3 col-8 mx-auto m-3">
+            <h3>Mascotas de {session.user?.name}</h3>
+            <button class="btn btn-primary btn-lg" type="button"
+                ><a class="link-light link-underline" href="/publicar-mascota"
+                    >Mis datos</a
+                ></button
+            >
+            <button class="btn btn-primary btn-lg" type="button"
+                ><a class="link-light link-underline" href="/publicar-mascota"
+                    >Publicar para adoptar</a
+                ></button
+            >
+            <button class="btn btn-primary btn-lg" type="button"
+                >Adopciones</button
+            >
+            <button class="btn btn-primary btn-lg" type="button"
+                >Mensajes</button
+            >
+            <button class="btn btn-primary btn-lg" type="button">
+                <a
+                    class="link-light link-underline"
+                    href="/solicitudes-de-adopcion">Solicitudes de adopción</a
+                ></button
+            >
+        </div>
+    </div> -->
+
+    {
+        session.user?.email ? (
+            <ProfileTabs client:load userEmail={session.user?.email} />
+            //userEmail nombre de la prop que le paso al componente ProfileTabs
+            //comp padre astro envia al hijo react
+        ) : (
+            <p>Cargando informacion del usuario...</p>
+        )
+    }
+</Layoutmenu>

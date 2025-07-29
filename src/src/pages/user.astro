@@ -1,0 +1,177 @@
+---
+// import { Usuarios } from "astro:db";
+// import { db } from "astro:db";
+// const usuarios = await db.select().from(Usuarios);
+
+import { turso } from "../turso";
+import Layoutmenu from "../layout/Layoutmenu.astro";
+import { getSession } from "auth-astro/server";
+const session = await getSession(Astro.request);
+if (!session) {
+	return Astro.redirect("/");
+}
+
+const { rows } = await turso.execute("select * from usuarios limit 3");
+---
+
+<Layoutmenu>
+	<h1>Usuarios</h1>
+
+	{
+		rows.length === 0 ? (
+			<p>no hay usuarios todavia</p>
+		) : (
+			<section class="posts-section">
+				<div class="posts-grid">
+					{rows.map((user) => (
+						<div class="post-card">
+							<h3>{user.nombre}</h3>
+							<p>{user.id}</p>
+							<p>{user.apellido}</p>
+							<p>{user.correo}</p>
+							<p>{user.telefono}</p>
+						</div>
+					))}
+				</div>
+			</section>
+		)
+	}
+
+	<!-- <ul>
+		{rows.map((usuario) => <li>{usuario.nombre}</li>
+		<li>{usuario.apellido}</li>)}
+	</ul>-->
+</Layoutmenu>
+<!-- 
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<link
+			href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+			rel="stylesheet"
+			integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr"
+			crossorigin="anonymous"
+		/>
+		<title>Astro</title>
+	</head>
+	<body>
+		<h1>Usuarios</h1>
+		<ul>
+			{
+				usuarios.map((usuario) => (
+					<>
+						<li>{usuario.nombre}</li>
+						<li>{usuario.apellido}</li>
+					</>
+				))
+			}
+		</ul>
+
+		<ul>
+			{rows.map((usuario) => <li>{usuario.nombre}</li>)}
+		</ul>
+	</body>
+</html> -->
+<style>
+	/* Contenedor principal de la sección de posts/usuarios */
+	.posts-section {
+		max-height: 60vh; /* Altura máxima del 70% del viewport height */
+		overflow-y: auto; /* Habilita el scroll vertical cuando el contenido excede max-height */
+		padding-right: 15px; /* Espacio para la barra de scroll si está a la derecha */
+		box-sizing: border-box; /* Incluir padding en el tamaño total */
+		border: 1px solid #3a3939; /* Opcional: para visualizar el límite del contenedor */
+		border-radius: 8px;
+		background-color: #fcfcfc;
+		padding: 1rem;
+	}
+
+	/* Estilos de la grilla para los elementos */
+	.posts-grid {
+		display: grid;
+		gap: 1rem; /* Espacio entre las tarjetas */
+		padding: 0.5rem; /* Padding interno para que las tarjetas no toquen los bordes del scroll */
+	}
+
+	/* MOBILE-FIRST: Por defecto, una columna */
+	.posts-grid {
+		grid-template-columns: 1fr; /* Una columna para dispositivos pequeños */
+	}
+
+	/* MEDIA QUERIES para pantallas más grandes */
+	@media (min-width: 576px) {
+		/* Por ejemplo, para pequeños tablets o móviles más grandes */
+		.posts-grid {
+			grid-template-columns: repeat(
+				auto-fill,
+				minmax(200px, 1fr)
+			); /* 2 columnas o más, adaptándose */
+		}
+	}
+
+	@media (min-width: 768px) {
+		/* Tablets y pantallas medianas */
+		.posts-grid {
+			grid-template-columns: repeat(
+				auto-fill,
+				minmax(250px, 1fr)
+			); /* Podrían ser 3 columnas o más */
+		}
+	}
+
+	@media (min-width: 992px) {
+		/* Desktops */
+		.posts-grid {
+			grid-template-columns: repeat(
+				4,
+				1fr
+			); /* 4 columnas fijas para pantallas grandes */
+			/* O si quieres que se adapte: grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); */
+		}
+	}
+
+	/* Estilos de las tarjetas individuales */
+	.user-card {
+		background-color: #fff;
+		padding: 1rem;
+		border-radius: 8px;
+		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+	}
+
+	.user-card h3 {
+		margin-top: 0;
+		color: #007bff;
+		font-size: 1.1em;
+		margin-bottom: 0.5rem;
+	}
+
+	.user-card p {
+		font-size: 0.9rem;
+		line-height: 1.4;
+		color: #555;
+		flex-grow: 1; /* Permite que el párrafo ocupe el espacio disponible */
+	}
+
+	.user-card small {
+		display: block;
+		text-align: right;
+		color: #888;
+		font-size: 0.75rem;
+		margin-top: 1rem;
+	}
+
+	/* Estilo para el mensaje de "no hay posts" */
+	.info-card {
+		background-color: #fff;
+		padding: 1.5rem;
+		border-radius: 8px;
+		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+		text-align: center;
+		color: #555;
+	}
+</style>
