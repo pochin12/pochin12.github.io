@@ -106,41 +106,43 @@ const MascotaListado = ({ mascotas }) => {
                     </select>
                 </div>
             </div>
-
-            <div
-                className="card m-0"
-                style={{ maxHeight: '65vh', overflowY: 'auto' }}
-            >
-                <div className="row">
-                    {filtrarMascotas.length > 0 ? (
-                        filtrarMascotas.map((mascota) => (
-                            <div key={mascota.id} className="col-md-4 col-6 mb-1"> {/* Ajusta el tamaño de la columna */}
-                                <div className="card h-100"> {/* h-100 para tarjetas de igual altura */}
-                                    {mascota.imagen && (
-                                        <img
-                                            src={mascota.imagen}
-                                            className="card-img-top"
-                                            alt={mascota.nombre}
-                                            style={{ height: '200px', objectFit: 'cover' }} // Estilo para la imagen
-                                        />
-                                    )}
-                                    <div className="card-body">
-                                        <h5 className="card-title">{mascota.nombre}</h5>
-                                        <p className="card-text">Sexo: {mascota.sexo}</p>
-                                        <p className="card-text">Edad: {mascota.edad} años</p>
-                                        <p className="card-text">Color: {mascota.color}</p>
-                                        {/* Aquí puedes añadir el botón para ver detalles si es necesario */}
-                                        <a href={`/mascotas/${mascota.id}`} className="btn btn-primary">Ver Detalles</a>
+            <div className="container-fluid p-0 m-0">
+                <div
+                    className="card p-2"
+                    style={{ maxHeight: '65vh', overflowY: 'auto' }}
+                >
+                    <div className="row">
+                        {filtrarMascotas.length > 0 ? (
+                            filtrarMascotas.map((mascota) => (
+                                <div key={mascota.id} className="col-md-4 col-6 mb-1"> {/* Ajusta el tamaño de la columna */}
+                                    <div className="card h-100 p-0"> {/* h-100 para tarjetas de igual altura */}
+                                        {mascota.imagen && (
+                                            <img
+                                                src={mascota.imagen}
+                                                className="card-img-top"
+                                                alt={mascota.nombre}
+                                                style={{ height: '200px', objectFit: 'cover' }} // Estilo para la imagen
+                                            />
+                                        )}
+                                        <div className="card-body">
+                                            <h5 className="card-title">{mascota.nombre}</h5>
+                                            <p className="card-text">Sexo: {mascota.sexo}</p>
+                                            <p className="card-text">Edad: {mascota.edad} años</p>
+                                            <p className="card-text">Color: {mascota.color}</p>
+                                            {/* Aquí puedes añadir el botón para ver detalles si es necesario */}
+                                            <a href={`/mascotas/${mascota.id}`} className="btn btn-primary">Ver Detalles</a>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        ))
-                    ) : (
-                        <p className="text-center col-12">No se encontraron mascotas con los filtros aplicados.</p>
-                    )}
-                </div>
+                            ))
+                        ) : (
+                            <p className="text-center col-12">No se encontraron mascotas con los filtros aplicados.</p>
+                        )}
+                    </div>
 
+                </div>
             </div>
+            
         </div>
     );
 
