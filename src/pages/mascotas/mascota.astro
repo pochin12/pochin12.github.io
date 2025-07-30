@@ -16,9 +16,16 @@ const url = Astro.url;
 const tipo = url.searchParams.get("tipo");
 
 try {
-    const datos = await turso.execute(
+    const datos  = await turso.execute(
         "select id, nombre, descripcion, tamano, tipo, imagen, color, edad, sexo from mascotas",
     );
+
+    //console.log(rows.rows.length);
+    //const listado = rows.rows;
+
+    
+    //console.log(listado);
+    
 
     listadomascotas = datos.rows.map((row) => ({
         id: row.id,
@@ -30,11 +37,11 @@ try {
         sexo: row.sexo,
         edad: row.edad,
     }));
-    
 } catch (error) {
     console.error("Error al cargar mascotas:", error);
     // Puedes pasar un mensaje de error a tu componente si lo deseas
 }
+
 
 const resultUser = await turso.execute({
     sql: "select correo from usuarios where correo = ?",
@@ -44,49 +51,51 @@ const resultUser = await turso.execute({
 ---
 
 <Layoutmenu>
+    <h2>probando las islas</h2>
+    <h2>a ver si de verdad carga mas rapido</h2>
     {
         listadomascotas.length === 0 ? (
             <p class="text-center">
                 No hay mascotas disponibles en este momento.
             </p>
         ) : (
-            <MascotaListado client:load mascotas={listadomascotas} />
+            <MascotaListado client:visible mascotas={listadomascotas} />
 
-            // <div class="container-fluid">
-            //     <div
-            //         class="card m-0"
-            //         style="max-height: 65vh; overflow-y: auto;"
-            //     >
-            //         <div class="row">
-            //             {datos.map((mascota) => (
-            //                 <div class="card w-50 p-2">
-            //                     <img
-            //                         class="card-imagen"
-            //                         src={mascota.imagen}
-            //                         class="card-img-top"
-            //                         alt="..."
-            //                     />
-            //                     <div class="card-body p-1">
-            //                         <h5 class="card-title">{mascota.nombre}</h5>
-            //                         <p class="card-text">
-            //                             {mascota.descripcion}
-            //                         </p>
-            //                         <p class="card-text">
-            //                             Color:
-            //                             {mascota.color}
-            //                         </p>
-            //                         <a
-            //                             href={`/mascotas/${mascota.id}`}
-            //                             class="btn btn-primary keychainify-checked"
-            //                         >
-            //                             Solicitar adopción
-            //                         </a>
-            //                     </div>
-            //                 </div>
-            //             ))}
-            //         </div>
-            //     </div>
-            // </div>
+            <div class="container-fluid">
+                <div
+                    class="card m-0"
+                    style="max-height: 65vh; overflow-y: auto;"
+                >
+                    <div class="row">
+                        {datos.rows.map((mascota) => (
+                            <div class="card w-50 p-2">
+                                <img
+                                    class="card-imagen"
+                                    src={mascota.imagen}
+                                    class="card-img-top"
+                                    alt="..."
+                                />
+                                <div class="card-body p-1">
+                                    <h5 class="card-title">{mascota.nombre}</h5>
+                                    <p class="card-text">
+                                        {mascota.descripcion}
+                                    </p>
+                                    <p class="card-text">
+                                        Color:
+                                        {mascota.color}
+                                    </p>
+                                    <a
+                                        href={`/mascotas/${mascota.id}`}
+                                        class="btn btn-primary keychainify-checked"
+                                    >
+                                        Solicitar adopción
+                                    </a>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
         )
     }
 </Layoutmenu>

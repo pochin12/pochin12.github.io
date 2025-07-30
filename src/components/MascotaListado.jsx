@@ -50,24 +50,25 @@ const MascotaListado = ({ mascotas }) => {
             <div className="row mb-3">
                 <div className="col-md-3">
                     <label htmlFor="filtrosexo" className="form-label">Filtrar por Sexo:</label>
-                    <input type="radio" id="opcion1" value="M" checked={filtrosexo === "M"} onChange={(e) => setFiltroSexo(e.target.value)}></input>
+                    {/* <input type="radio" id="opcion1" value="M" checked={filtrosexo === "M"} onChange={(e) => setFiltroSexo(e.target.value)}></input>
                     <label>Macho</label>
                     <input type="radio" id="opcion1" value="H" checked={filtrosexo === "H"} onChange={(e) => setFiltroSexo(e.target.value)}></input>
-                    <label>hembra</label>
+                    <label>hembra</label> */}
                     
-                    {/* <select id="filtrosexo" className="form-select" value={filtrosexo} onChange={(e) => setFiltroSexo(e.target.value)}>
+                    <select id="filtrosexo" className="form-select" value={filtrosexo} onChange={(e) => setFiltroSexo(e.target.value)}>
                         <option value="M">Macho</option>
                         <option value="H">Hembra</option>
                         <option value="">Todos</option>
-                    </select> */}
+                    </select>
                 </div>
                 <div className="col-md-3 col-xs-1">
-                    <label htmlFor="filtrocolor" className="container-fluid form-label">Filtrar por Color:</label>
+                    <label htmlFor="filtrocolor" className="form-label">Filtrar por Color:</label>
                     <select
                         id="filtrocolor"
                         className="form-select"
                         value={filtrocolor}
                         onChange={(e) => setFiltroColor(e.target.value)}
+                        
                     >
                         <option value="">Todos</option>
                         {coloresUnicos.map(color => (
@@ -113,7 +114,7 @@ const MascotaListado = ({ mascotas }) => {
                 <div className="row">
                     {filtrarMascotas.length > 0 ? (
                         filtrarMascotas.map((mascota) => (
-                            <div key={mascota.id} className="col-md-4 col-sm-6 mb-3"> {/* Ajusta el tamaño de la columna */}
+                            <div key={mascota.id} className="col-md-4 col-6 mb-1"> {/* Ajusta el tamaño de la columna */}
                                 <div className="card h-100"> {/* h-100 para tarjetas de igual altura */}
                                     {mascota.imagen && (
                                         <img
