@@ -2,6 +2,7 @@
 import { SignOut } from "auth-astro/components";
 import Layoutmenu from "../layout/Layoutmenu.astro";
 import { getSession } from "auth-astro/server";
+import { Image } from "astro:assets";
 
 const session = await getSession(Astro.request);
 if (!session) {
@@ -14,7 +15,7 @@ if (!session) {
                 <div class="container-fluid p-3">
                     <div class="card w-100">
                         <img
-                            src="/public/tarjeta-inicio.png"
+                            src="/img/tarjeta-inicio.png"
                             class="card-img-top"
                             alt="..."
                         />

@@ -61,41 +61,41 @@ const resultUser = await turso.execute({
         ) : (
             <MascotaListado client:visible mascotas={listadomascotas} />
 
-            <div class="container-fluid">
-                <div
-                    class="card m-0"
-                    style="max-height: 65vh; overflow-y: auto;"
-                >
-                    <div class="row">
-                        {datos.rows.map((mascota) => (
-                            <div class="card w-50 p-2">
-                                <img
-                                    class="card-imagen"
-                                    src={mascota.imagen}
-                                    class="card-img-top"
-                                    alt="..."
-                                />
-                                <div class="card-body p-1">
-                                    <h5 class="card-title">{mascota.nombre}</h5>
-                                    <p class="card-text">
-                                        {mascota.descripcion}
-                                    </p>
-                                    <p class="card-text">
-                                        Color:
-                                        {mascota.color}
-                                    </p>
-                                    <a
-                                        href={`/mascotas/${mascota.id}`}
-                                        class="btn btn-primary keychainify-checked"
-                                    >
-                                        Solicitar adopción
-                                    </a>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </div>
+            // <div class="container-fluid">
+            //     <div
+            //         class="card m-0"
+            //         style="max-height: 65vh; overflow-y: auto;"
+            //     >
+            //         <div class="row">
+            //             {datos.rows.map((mascota) => (
+            //                 <div class="card w-50 p-2">
+            //                     <img
+            //                         class="card-imagen"
+            //                         src={mascota.imagen}
+            //                         class="card-img-top"
+            //                         alt="..."
+            //                     />
+            //                     <div class="card-body p-1">
+            //                         <h5 class="card-title">{mascota.nombre}</h5>
+            //                         <p class="card-text">
+            //                             {mascota.descripcion}
+            //                         </p>
+            //                         <p class="card-text">
+            //                             Color:
+            //                             {mascota.color}
+            //                         </p>
+            //                         <a
+            //                             href={`/mascotas/${mascota.id}`}
+            //                             class="btn btn-primary keychainify-checked"
+            //                         >
+            //                             Solicitar adopción
+            //                         </a>
+            //                     </div>
+            //                 </div>
+            //             ))}
+            //         </div>
+            //     </div>
+            // </div>
         )
     }
 </Layoutmenu>
