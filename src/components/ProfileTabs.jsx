@@ -4,6 +4,7 @@ const ProfileTabs = ({ userEmail }) => {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [usuarioid, setUsuarioId] = useState(null);
 
     //cargar segun pestaña activa
     const fetchData = async (tab) => {

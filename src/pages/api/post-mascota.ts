@@ -3,6 +3,8 @@ import { turso } from "../../turso";
 
 export const POST: APIRoute = async ({ request, redirect }) => {
     try {
+
+
         const formData = await request.formData();
         const nombre = formData.get('nombre');
         const color = formData.get('color');
