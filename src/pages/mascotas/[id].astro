@@ -98,7 +98,7 @@ try {
         boton = false;
         claseboton = "btn btn-primary disabled";
     }
-    console.log(resultUser.rows.length > 0);
+    console.log(solicitante);
     console.log(boton);
 } catch (error) {
     console.error(`Error al obtener mascota con el id ${id}:`, error);
@@ -231,6 +231,16 @@ if (!masc) {
                     type="hidden"
                     name="nombre_usuario"
                     value={masc.nombre_usuario}
+                />
+                <input
+                    type="hidden"
+                    name="id_solicitante"
+                    value={solicitante.id}
+                />
+                <input
+                    type="hidden"
+                    name="nombre_solicitante"
+                    value={solicitante.nombre}
                 />
 
                 <button type="submit" class="btn btn-success">Confirmar</button>
