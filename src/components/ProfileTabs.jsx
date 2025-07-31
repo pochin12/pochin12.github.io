@@ -305,8 +305,9 @@ const ProfileTabs = ({ userEmail }) => {
                                     //         <li key={item.id}>Solicitud para {item.fecha_solicitud} solicitante: {item.nombre_solicitante}({item.estado})</li>
                                     //     ))}
                                     //     </ul>                                    
-                                    <div class="container-fluid pt-3">
-                                        <table class="table table-hover">
+                                    <div class="container-fluid pt-3" style={{ overflowX: 'auto' }}>
+                                        <table class="table table-hover"
+                                        >
                                             <thead>
                                                 <tr>
                                                     <th scope="col">#</th>
@@ -314,6 +315,7 @@ const ProfileTabs = ({ userEmail }) => {
                                                     <th scope="col">Mascota</th>
                                                     <th scope="col">Fecha solicitud</th>
                                                     <th scope="col">Estado</th>
+                                                    <th scope="col">Aceptado</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -324,6 +326,9 @@ const ProfileTabs = ({ userEmail }) => {
                                                         <td>{item.id_mascota}</td>
                                                         <td>{item.fecha_solicitud}</td>
                                                         <td>{item.estado}</td>
+                                                        <td><button type="button" class="btn btn-outline-danger">X</button>
+                                                            <button type="button" class="btn btn-outline-success">v</button>
+                                                        </td>
                                                     </tr>
                                                 ))
                                                 }
