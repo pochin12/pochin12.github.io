@@ -5,6 +5,11 @@ const ProfileTabs = ({ userEmail }) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [usuarioid, setUsuarioId] = useState(null);
+    const [activado, setActivado] = useState(true);
+    // const manejarBoton = () => {
+    //     setActivado(!activado);
+    // };
+
 
     //cargar segun pestaña activa
     const fetchData = async (tab) => {
@@ -21,7 +26,7 @@ const ProfileTabs = ({ userEmail }) => {
                     //debe coincidir con el nombre en el endpoint searchParams.get('userEmail')
                     break;
                 case 'publicarMascota':
-                    setData({ message: "Cargar datos de mascota para adopción" });
+                    setData({});
                     setLoading(false);
                     return;
                 case 'adopciones':
@@ -43,16 +48,26 @@ const ProfileTabs = ({ userEmail }) => {
             }
             if (endpoint) {
                 const response = await fetch(endpoint);
-                if(!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                    //"Bad Request" (400): Este es un error común cuando la //
-                    // solicitud enviada al servidor es incorrecta o le falta información esperada.
-                    //HTTP error! status: 400: Esto significa que tu cliente (el fetch en ProfileTabs) //
-                    // sí está llegando a tu endpoint de Astro, pero el endpoint //
-                    //  está devolviendo un error HTTP 400 (Bad Request).
-                }
                 const json = await response.json();
                 setData(json);
+                if (!response.ok) {
+                    if (response.status === 404 && json.error === 'Usuario no encontrado en la base de datos.') {
+                        setError('USUARIO_NO_ENCONTRADO'); // Usamos un código interno para este caso específico
+                        setData(null); // Asegúrate de que no haya datos viejos
+                        setActivado(!activado);
+                    } else {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                        //"Bad Request" (400): Este es un error común cuando la //
+                        // solicitud enviada al servidor es incorrecta o le falta información esperada.
+                        //HTTP error! status: 400: Esto significa que tu cliente (el fetch en ProfileTabs) //
+                        // sí está llegando a tu endpoint de Astro, pero el endpoint //
+                        //  está devolviendo un error HTTP 400 (Bad Request);
+                    }
+                } else {
+                    setData(json); 
+                    //si la respues es ok codigo 200
+                }
+                
             }
         } catch (err) {
             setError(err.message || 'Error al cargar los datos-.');
@@ -87,12 +102,14 @@ const ProfileTabs = ({ userEmail }) => {
                 <option value="solicitudesAdopcion">Solicitudes de adopción</option>
             </select> */}
             <div className="dropdown">
-                <button
+                
+                <button disabled={!activado}
                     className="btn btn-sueccess dropdown-toggle" // Clases de Bootstrap para el botón
                     type="button"
                     id="profileDropdown" // Un ID único para el botón
                     data-bs-toggle="dropdown"
                     aria-expanded="false"
+                    
                 >
                     {/* Muestra el texto de la pestaña activa o un texto por defecto */}
                     {
@@ -155,7 +172,19 @@ const ProfileTabs = ({ userEmail }) => {
             </div>
             <div className="mt-4 p-3 border rounded">
                 {loading && <p>Cargando datos...</p>}
-                {error && <p className="text-danger">Error: {error}</p>}
+                {/* {error && <p className="text-danger">Error: {error}</p>} */}
+                {error === 'USUARIO_NO_ENCONTRADO' ? (
+                    <div className="alert alert-info" role="alert">
+                        <p>Usuario no encontrado en la base de datos.</p>
+                        <p>¿Deseas registrar tus datos para poder gestionar tus mascotas y adopciones?</p>
+                        {/* Aquí puedes añadir un botón o un enlace a un formulario de registro */}
+                        <button className="btn btn-primary mt-2" onClick={() => setActiveTab('registrarUsuario')}>
+                            Registrarme
+                        </button>
+                    </div>
+                ) : error && (
+                    <p className="text-danger">Error: {error}</p>
+                )}
                 {!loading && !error && data && (
                     <div>
                         {activeTab === 'misDatos' && (
@@ -164,35 +193,36 @@ const ProfileTabs = ({ userEmail }) => {
                                 {/* CORRECCIÓN: Los datos de usuario vendrán de tu endpoint, no de data.user directamente si el endpoint retorna un objeto con 'usuarios' */}
                                 {/* Necesitarás adaptar cómo accedes a los datos si el endpoint devuelve { usuarios: [{...}] } */}
                                 {/* <pre>{JSON.stringify(data, null, 2)}</pre> */}
-                                <div class="form-floating">
-                                    <input type="text" class="form-control" id="nombre" placeholder='ingrese'></input>
-                                    <label for="nombre">Nombre:</label>
-                                </div>
-                                <div class="form-floating">
-                                    <input type="text" class="form-control" id="apellido" placeholder='ingrese'></input>
-                                    <label for="apellido">Apellido:</label>
-                                </div>
-                                <div class="form-floating">
-                                    <input type="email" class="form-control" id="correo" placeholder="correo" value={userEmail} disabled required />
-                                    <label for="correo">Correo</label>
-                                </div>
                                 
-                                <div class="form-floating">
-                                    <input type="number" class="form-control" id="telefono" placeholder='telefono'></input>
-                                    <label for="telefono">Telefono:</label>
-                                </div>
                                 
-                                {data.usuarios && data.usuarios.length > 0 && (
-                                    
+                                {data.usuarios && data.usuarios.length > 0 ? (
                                     <>
-                                        
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control" id="nombre" placeholder='ingrese'></input>
+                                            <label for="nombre">Nombre:</label>
+                                        </div>
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control" id="apellido" placeholder='ingrese'></input>
+                                            <label for="apellido">Apellido:</label>
+                                        </div>
+                                        <div class="form-floating">
+                                            <input type="email" class="form-control" id="correo" placeholder="correo" value={userEmail} disabled required />
+                                            <label for="correo">Correo</label>
+                                        </div>
+
+                                        <div class="form-floating">
+                                            <input type="number" class="form-control" id="telefono" placeholder='telefono'></input>
+                                            <label for="telefono">Telefono:</label>
+                                        </div>
                                     </>
+                                ):(
+                                    <p>hola</p>
                                 )}
                             </div>
                         )}
                         {activeTab === 'publicarMascota' && (
                             <div>
-                                <h4>Cargar datos de mascota para adopción</h4>
+                                <h5>Cargar datos de mascota para adopción</h5>
                                 
                                 <form action="/api/perfil/post-mascota" method="POST">
                 

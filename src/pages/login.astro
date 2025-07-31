@@ -14,7 +14,19 @@ if (!session) {
     <h3>Hola {session.user?.name}</h3>
     <div class="container-fluid p-3">
         <div class="card w-100">
-            <Image src={imageninicio} class="card-img-top" alt="..." />
+            <div class="text-center">
+                <Image
+                    src={imageninicio}
+                    alt=""
+                    class="img-fluid"
+                    style={{
+                        maxheight: "200px",
+                        maxweigth: "300px",
+                        objectFit: "cover",
+                    }}
+                />
+            </div>
+
             <div class="card-body">
                 <p class="card-text text-center">
                     Adoptar salva vidas. Adopcion responsable mas alla del amor

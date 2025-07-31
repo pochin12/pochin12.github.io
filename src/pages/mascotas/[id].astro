@@ -5,11 +5,13 @@ import { turso } from "../../turso";
 import { getSession } from "auth-astro/server";
 
 const session = await getSession(Astro.request);
-if (!session) {
-    return Astro.redirect("/");
-}
+// if (!session) {
+//     return Astro.redirect("/");
+// }
 
 const correoSolicitante = session.user?.email;
+let boton = true;
+let claseboton = "btn btn-primary";
 
 interface User {
     id: number;
@@ -31,6 +33,7 @@ interface Mascotaconusuario {
     descripcion: string;
     tamano: string;
     edad: number;
+    imagen: string;
     sexo: numeric;
 }
 
@@ -49,19 +52,20 @@ let user: User | undefined;
 let masc: Mascotaconusuario | undefined;
 let solicitante: Solicitante | undefined;
 
-if (!session) {
-    return Astro.redirect("/");
-}
-console.log(session.user?.email);
+// if (!session) {
+//     return Astro.redirect("/");
+// }
+console.log(correoSolicitante);
 
 try {
     // Ejecuta la consulta con turso.execute
     // Usa placeholders (?) para el ID y asegúrate de pasarlo en el array 'args'
     const result = await turso.execute({
-        sql: "SELECT m.id AS mascota_id, m.nombre AS nombre_mascota, m.color, m.descripcion, m.edad, m.tamano, m.sexo, u.id AS usuario_id, u.nombre AS nombre_usuario, u.apellido AS apellido_usuario, u.correo AS correo_usuario, u.telefono AS telefono_usuario FROM mascotas AS m JOIN usuarios AS u ON m.id_u = u.id WHERE m.id = ?",
+        sql: "SELECT m.id AS mascota_id, m.nombre AS nombre_mascota, m.color, m.descripcion, m.edad, m.tamano, m.sexo, m.imagen, u.id AS usuario_id, u.nombre AS nombre_usuario, u.apellido AS apellido_usuario, u.correo AS correo_usuario, u.telefono AS telefono_usuario FROM mascotas AS m JOIN usuarios AS u ON m.id_u = u.id WHERE m.id = ?",
         args: [id], // El ID viene como string de Astro.params, LibSQL lo convertirá si la columna es INTEGER
         //"Select id, nombre"
     });
+    console.log(result.rows);
 
     // turso.execute devuelve un objeto con la propiedad 'rows'
     // 'rows' es un array de arrays (si no usas objetos de fila) o un array de objetos.
@@ -69,7 +73,7 @@ try {
     // entonces result.rows[0] será directamente un objeto con las propiedades nombre, apellido, etc.
 
     // Asegúrate de que result.rows exista y no esté vacío
-    if (result.rows && result.rows.length > 0) {
+    if (result.rows) {
         // Si tu cliente turso está configurado para retornar objetos:
         masc = result.rows[0] as Mascotaconusuario;
         // Si tu cliente turso retorna arrays (por defecto sin configuración extra):
@@ -90,11 +94,14 @@ try {
 
     if (resultUser.rows.length > 0) {
         solicitante = resultUser.rows[0] as Solicitante;
+    } else {
+        boton = false;
+        claseboton = "btn btn-primary disabled";
     }
-
-    console.log(solicitante.id)
+    console.log(resultUser.rows.length > 0);
+    console.log(boton);
 } catch (error) {
-    console.error(`Error al obtener el usuario con ID ${id}:`, error);
+    console.error(`Error al obtener mascota con el id ${id}:`, error);
     // Puedes redirigir a una página de error genérica o 404 aquí también
 }
 // Si el usuario no se encuentra, puedes redirigir o mostrar un mensaje de error
@@ -129,6 +136,13 @@ if (!masc) {
     <div class="container my-4">
         <div class="card p-4 shadow-sm">
             <h1 class="card-title mb-3">Detalles de {masc.nombre_mascota}</h1>
+            <div>
+                <img
+                    src={masc.imagen}
+                    class="card-img-top"
+                    style={{ height: "200px", objectFit: "cover" }}
+                />
+            </div>
 
             <div class="mb-3">
                 <strong>Nombre del responsable:</strong>
@@ -155,23 +169,32 @@ if (!masc) {
                 {masc.edad}
             </div>
 
-            <a href="/mascotas/mascota" class="btn btn-primary mt-3"
-                >Volver a la lista</a
-            >
-            <a
+            <div class="d-flex justify-content-between">
+                <a href="/mascotas/mascota" class="btn btn-primary"
+                    >Volver a la lista</a
+                >
+                <a
+                    id="openModalBtn"
+                    class={claseboton}
+                    tabindex="-1"
+                    role="button"
+                    aria-disabled={boton}>Solicitar adopción</a
+                >
+            </div>
+            <!-- <a
                 href={`/mascotas/solicitud/${masc.mascota_id}?nombre=${encodeURIComponent(masc.nombre_mascota)}&color=${encodeURIComponent(masc.color)}`}
                 class="btn btn-primary keychainify-checked"
             >
                 Solicitar adopción
-            </a>
+            </a> -->
             <!-- en este caso podemos pasar varios parametros a una nueva pagina y se pueden insertar de manera tradicional con un formulario y metodo post aprovechamos un subconjunto de los datos de la consulta actual siempre que no necesitemos muchos datos porque puede volverse lento.
              para utilizar un modal y no redirigir debe hacerse con js del lado del cliente y se utiliza con fetch, en este caso obtenemos los datos directamente de esta pagina sin recargar -->
         </div>
     </div>
 
-    <button id="openModalBtn" class="btn btn-primary mt-3"
+    <!-- <button id="openModalBtn" class="btn btn-primary mt-3"
         >Solicitar Adopción</button
-    >
+    > -->
 
     <div
         id="adoptionModal"
@@ -192,7 +215,6 @@ if (!masc) {
                 {masc.apellido_usuario}
             </p>
             <p>Correo del responsable: {masc.correo_usuario}</p>
-            <p>mi correo: {session.user?.email}</p>
 
             <form id="adoptionForm">
                 <input
@@ -209,26 +231,6 @@ if (!masc) {
                     type="hidden"
                     name="nombre_usuario"
                     value={masc.nombre_usuario}
-                />
-                <input
-                    type="hidden"
-                    name="id_solicitante"
-                    value={solicitante.id}
-                />
-                <input
-                    type="hidden"
-                    name="nombre_solicitante"
-                    value={solicitante.nombre}
-                />
-                <input
-                    type="hidden"
-                    name="apellido_solicitante"
-                    value={solicitante.apellido}
-                />
-                <input
-                    type="hidden"
-                    name="correo_solicitante"
-                    value={correoSolicitante}
                 />
 
                 <button type="submit" class="btn btn-success">Confirmar</button>

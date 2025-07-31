@@ -2,11 +2,17 @@
 import Layoutmenu from "../layout/Layoutmenu.astro";
 import ProfileTabs from "../components/ProfileTabs";
 import { getSession } from "auth-astro/server";
+import { turso } from "../turso";
 const session = await getSession(Astro.request);
 if (!session) {
     return Astro.redirect("/");
 }
-console.log(session.user?.email);
+const correo = session.user?.email;
+const result = await turso.execute({
+    sql: "select id from usuarios where correo = ?",
+    args: [correo],
+});
+console.log(result.rows.length > 0);
 ---
 
 <Layoutmenu>
@@ -40,12 +46,40 @@ console.log(session.user?.email);
     </div> -->
 
     {
-        session.user?.email ? (
+        result.rows.length > 0 ? (
             <ProfileTabs client:load userEmail={session.user?.email} />
+        ) : (
             //userEmail nombre de la prop que le paso al componente ProfileTabs
             //comp padre astro envia al hijo react
-        ) : (
-            <p>Cargando informacion del usuario...</p>
+            <div class="alert alert-warning alert-dimissible fade show" role="alert"><strong>Debe registrarse para cargar mascotas o solicitar adopciones</strong><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>
+            
+            <div class="container-fluid">
+        <div class="card m-0" style="max-height: 80vh; overflow-y: auto;">
+            <form action="/api/post" method="POST">
+                <h2>Crear Nuevo Usuario</h2>
+                <div>
+                    <label for="name">Nombre:</label>
+                    <input type="text" id="nombre" name="nombre" required />
+                </div>
+                <div>
+                    <label for="name">Apellido:</label>
+                    <input type="text" id="apellido" name="apellido" required />
+                </div>
+                <div>
+                    <label for="email">Correo:</label>
+                    <input type="email" id="correo" name="correo" value={correo} required />
+                </div>
+                <div>
+                    <label for="tel">Telefono:</label>
+                    <input type="text" id="telefono" name="telefono" required />
+                </div>
+
+                <button type="submit">Guardar Usuario</button>
+                
+            </form>
+            
+        </div>
+    </div>
         )
     }
 </Layoutmenu>
