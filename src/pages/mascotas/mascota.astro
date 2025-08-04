@@ -13,7 +13,7 @@ const correousuario = session.user?.email;
 let listadomascotas = [];
 
 const url = Astro.url;
-const tipo = url.searchParams.get("tipo");
+//const tipo = url.searchParams.get("tipo");
 
 try {
     const datos  = await turso.execute(
@@ -37,6 +37,8 @@ try {
         sexo: row.sexo,
         edad: row.edad,
     }));
+
+    
 } catch (error) {
     console.error("Error al cargar mascotas:", error);
     // Puedes pasar un mensaje de error a tu componente si lo deseas
@@ -57,7 +59,7 @@ const resultUser = await turso.execute({
                 No hay mascotas disponibles en este momento.
             </p>
         ) : (
-            <MascotaListado client:visible mascotas={listadomascotas} />
+            <MascotaListado client:load mascotas={listadomascotas} />
 
             // <div class="container-fluid">
             //     <div

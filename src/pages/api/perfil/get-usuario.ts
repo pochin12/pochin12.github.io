@@ -18,7 +18,7 @@ export const GET: APIRoute = async ({ request }) => {
     
     try {
         const result = await turso.execute({
-            sql: 'select id, nombre, apellido, correo from usuarios where correo = ?',
+            sql: 'select id, nombre, apellido, correo, telefono from usuarios where correo = ?',
             args: [email],
         })
     
@@ -35,10 +35,14 @@ export const GET: APIRoute = async ({ request }) => {
 
             
         }
+        const users = result.rows
+        console.log(users)
         return new Response(JSON.stringify({ usuarios: result.rows }), {
             status: 200,
             headers: { 'Content-Type': 'application/json' },
+            
         });
+        
 
  
     } catch (error) {

@@ -10,16 +10,10 @@ const session = await getSession(Astro.request);
 // }
 
 const correoSolicitante = session.user?.email;
-let boton = true;
-let claseboton = "btn btn-primary";
+let btnuser = true;
+let clasebtnuser = "btn btn-primary";
+//let btnsolicitud = true;
 
-interface User {
-    id: number;
-    nombre: string;
-    apellido: string;
-    correo: string;
-    telefono: number;
-}
 
 interface Mascotaconusuario {
     mascota_id: number;
@@ -43,18 +37,13 @@ interface Solicitante {
     apellidoe: string;
 }
 
-// interface Props {
-//     masc: Mascotaconusuario;
-// }
-
 const { id } = Astro.params;
-let user: User | undefined;
+
 let masc: Mascotaconusuario | undefined;
 let solicitante: Solicitante | undefined;
 
-// if (!session) {
-//     return Astro.redirect("/");
-// }
+console.log(typeof id);
+
 console.log(correoSolicitante);
 
 try {
@@ -65,7 +54,7 @@ try {
         args: [id], // El ID viene como string de Astro.params, LibSQL lo convertirá si la columna es INTEGER
         //"Select id, nombre"
     });
-    console.log(result.rows);
+    
 
     // turso.execute devuelve un objeto con la propiedad 'rows'
     // 'rows' es un array de arrays (si no usas objetos de fila) o un array de objetos.
@@ -91,17 +80,31 @@ try {
         sql: "select id, nombre, apellido from usuarios where correo = ?",
         args: [correoSolicitante],
     });
+    
 
     if (resultUser.rows.length > 0) {
         solicitante = resultUser.rows[0] as Solicitante;
-    } else {
-        boton = false;
-        claseboton = "btn btn-primary disabled";
+
+        const usuarioid = solicitante.id;
+        const mascotaid = masc?.mascota_id;
+        
+        const usuario = await turso.execute({
+        sql: 'select id_solicitante from solicitudes where id_solicitante = ? and id_mascota = ?',
+        
+        args: [usuarioid, mascotaid],
+    }); if (usuario.rows.length>0) {
+        btnuser = false;
+        clasebtnuser = "btn btn-primary disabled";
+        //btnsolicitud = false ;
+
     }
-    console.log(solicitante);
-    console.log(boton);
+    } else {
+        btnuser = false;
+        clasebtnuser = "btn btn-primary disabled";
+    }
+    
 } catch (error) {
-    console.error(`Error al obtener mascota con el id ${id}:`, error);
+    console.error(`Error al obtener mascota con el id:`, error);
     // Puedes redirigir a una página de error genérica o 404 aquí también
 }
 // Si el usuario no se encuentra, puedes redirigir o mostrar un mensaje de error
@@ -168,6 +171,9 @@ if (!masc) {
                 <strong>Edad:</strong>
                 {masc.edad}
             </div>
+            <!-- {(btnsolicitud && btnuser )? (
+                <div class="alert alert-warning alert-dimissible fade show" role="alert"><strong>Debe registrarse para cargar mascotas o solicitar adopciones</strong><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>
+            ):(<></>)} -->
 
             <div class="d-flex justify-content-between">
                 <a href="/mascotas/mascota" class="btn btn-primary"
@@ -175,28 +181,16 @@ if (!masc) {
                 >
                 <a
                     id="openModalBtn"
-                    class={claseboton}
+                    class={clasebtnuser}
                     tabindex="-1"
                     role="button"
-                    aria-disabled={boton}>Solicitar adopción</a
+                    aria-disabled={btnuser}>Solicitar adopción</a
                 >
             </div>
-            <!-- <a
-                href={`/mascotas/solicitud/${masc.mascota_id}?nombre=${encodeURIComponent(masc.nombre_mascota)}&color=${encodeURIComponent(masc.color)}`}
-                class="btn btn-primary keychainify-checked"
-            >
-                Solicitar adopción
-            </a> -->
-            <!-- en este caso podemos pasar varios parametros a una nueva pagina y se pueden insertar de manera tradicional con un formulario y metodo post aprovechamos un subconjunto de los datos de la consulta actual siempre que no necesitemos muchos datos porque puede volverse lento.
-             para utilizar un modal y no redirigir debe hacerse con js del lado del cliente y se utiliza con fetch, en este caso obtenemos los datos directamente de esta pagina sin recargar -->
-        </div>
-    </div>
+            
 
-    <!-- <button id="openModalBtn" class="btn btn-primary mt-3"
-        >Solicitar Adopción</button
-    > -->
-
-    <div
+            {btnuser && solicitante ? (
+                <div
         id="adoptionModal"
         style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;"
     >
@@ -235,12 +229,12 @@ if (!masc) {
                 <input
                     type="hidden"
                     name="id_solicitante"
-                    value={solicitante.id}
+                    value={solicitante?.id}
                 />
                 <input
                     type="hidden"
                     name="nombre_solicitante"
-                    value={solicitante.nombre}
+                    value={solicitante?.nombre}
                 />
 
                 <button type="submit" class="btn btn-success">Confirmar</button>
@@ -253,6 +247,21 @@ if (!masc) {
             <div id="formStatus" style="margin-top: 10px; color: red;"></div>
         </div>
     </div>
+
+            ) : ( 
+                <></>
+            ) }
+            
+            
+             
+            {/* <!-- en este caso podemos pasar varios parametros a una nueva pagina y se pueden insertar de manera tradicional con un formulario y metodo post aprovechamos un subconjunto de los datos de la consulta actual siempre que no necesitemos muchos datos porque puede volverse lento.
+             para utilizar un modal y no redirigir debe hacerse con js del lado del cliente y se utiliza con fetch, en este caso obtenemos los datos directamente de esta pagina sin recargar --> */}
+        </div>
+    </div>
+    
+
+
+    
 
     <script
         define:vars={{

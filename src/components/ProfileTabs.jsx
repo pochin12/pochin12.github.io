@@ -197,23 +197,29 @@ const ProfileTabs = ({ userEmail }) => {
                                 
                                 {data.usuarios && data.usuarios.length > 0 ? (
                                     <>
-                                        <div class="form-floating">
-                                            <input type="text" class="form-control" id="nombre" placeholder='ingrese'></input>
+                                        {data.usuarios.map(item => (
+                                            <div key={item.id}>
+                                            <div class="form-floating">
+                                            <input type="text" class="form-control" id="nombre" placeholder='nombre' value={item.nombre}></input>
                                             <label for="nombre">Nombre:</label>
                                         </div>
                                         <div class="form-floating">
-                                            <input type="text" class="form-control" id="apellido" placeholder='ingrese'></input>
+                                            <input type="text" class="form-control" id="apellido" placeholder='ingrese' value={item.apellido} ></input>
                                             <label for="apellido">Apellido:</label>
                                         </div>
                                         <div class="form-floating">
-                                            <input type="email" class="form-control" id="correo" placeholder="correo" value={userEmail} disabled required />
+                                            <input type="email" class="form-control" id="correo" placeholder="correo" value={item.correo} disabled required />
                                             <label for="correo">Correo</label>
                                         </div>
 
                                         <div class="form-floating">
-                                            <input type="number" class="form-control" id="telefono" placeholder='telefono'></input>
+                                            <input type="number" class="form-control" id="telefono" placeholder='telefono' value={item.telefono}></input>
                                             <label for="telefono">Telefono:</label>
-                                        </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                        
+                                        
                                     </>
                                 ):(
                                     <p>hola</p>
@@ -327,19 +333,38 @@ const ProfileTabs = ({ userEmail }) => {
                                                         <td>{item.fecha_solicitud}</td>
                                                         <td>{item.estado}</td>
                                                         <td><button type="button" class="btn btn-outline-danger">X</button>
-                                                            <button type="button" class="btn btn-outline-success">v</button>
+                                                            <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#exampleModal">v</button>
                                                         </td>
                                                     </tr>
                                                 ))
                                                 }
-                                                {/* <ul>
-                                                    {data.adopciones.map(item => (
-                                                        <li key={item.id}>Adopción de {item.fecha_solicitud} ({item.estado})</li>
-                                                    ))}
-                                                </ul> */}
+            
                                             </tbody>
                                         </table>
+                                        
+
+                                        
+                                        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    {/* <form action="/api/post-adopcion" method="POST"></form> */}
+                                                    <div class="modal-header">
+                                                        <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <p>Desea aceptar esta solicitud de adopción? Se quitará de esta lista y podra ver en la sección de adopciones para seguimiento </p>
+                                                        ...
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                        <button type="button" class="btn btn-primary">Aceptar solicitud</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
+                                    
                                 ) : (
                                     <p>No tienes solicitudes de adopción pendientes.</p>
                                 )}

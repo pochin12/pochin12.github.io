@@ -129,7 +129,8 @@ const MascotaListado = ({ mascotas }) => {
                                             <p className="card-text">Sexo: {mascota.sexo}</p>
                                             <p className="card-text">Edad: {mascota.edad} años</p>
                                             <p className="card-text">Color: {mascota.color}</p>
-                                            <p className="card-text">Color: {mascota.id}</p>
+                                            
+                                            
                                             {/* Aquí puedes añadir el botón para ver detalles si es necesario */}
                                             <a href={`/mascotas/${mascota.id}`} className="btn btn-primary">Ver Detalles</a>
                                         </div>
