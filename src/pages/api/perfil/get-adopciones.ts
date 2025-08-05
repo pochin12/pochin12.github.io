@@ -34,6 +34,7 @@ export const GET: APIRoute = async ({ request }) => {
             sql: 'select id, id_usuario, id_mascota, fecha_solicitud, estado from adopciones where id_usuario = ?',
             args: [userId]
         });
+        console.log(result.rows)
         return new Response(JSON.stringify({ adopciones: result.rows }), {
             status: 200,
             headers: { 'Content-Type': 'application/json' },

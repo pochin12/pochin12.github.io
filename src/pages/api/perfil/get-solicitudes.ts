@@ -1,8 +1,8 @@
 
-import type { NumberColumnInput } from "@astrojs/db/types";
+
 import type { APIRoute } from "astro";
 import { turso } from "../../../turso";
-import { getSession } from "auth-astro/server";
+
 
 // const session = await getSession(Astro.request);
 // if (!session) {
@@ -38,10 +38,13 @@ export const GET: APIRoute = async ({ request }) => {
             args: [userId],
 
         });
+
+        //console.log(result.rows);
         return new Response(JSON.stringify({ solicitudes: result.rows }), {
             status: 200,
             headers: { 'Content-Type': 'application/json' },
         });
+        
 
     } catch (error) {
         console.error('Error fetching solicitudes:', error);

@@ -1,0 +1,40 @@
+// import type { APIRoute } from "astro";
+// import { turso } from "../../../turso";
+
+
+// export const POST: APIRoute = async ({
+//     request }) => {
+//     try {
+//         const data = await request.json();
+//         const { id_usuario, id_mascota } = data;
+        
+//         // Validar que los datos existen
+//         if (!id_usuario || !id_mascota) {
+//             return new Response(JSON.stringify({ message: 'Faltan datos de usuario o mascota.' }), {
+//                 status: 400,
+//                 headers: { 'Content-Type': 'application/json' },
+//             });
+//         }
+//     } catch (error) {
+//         // Este catch capturará el error si turso.execute falla
+//         console.error('Error al cargar la mascota:', error);
+//         return new Response(JSON.stringify({ error: 'Fallo al registrar.' }), {
+//             status: 500,
+//             headers: { 'Content-Type': 'application/json' },
+//         });
+//     }
+//     }
+
+import type { APIRoute } from "astro";
+import { turso } from "../../../turso";
+
+export const POST: APIRoute = async ({ request }) => {
+    
+    const formData = await request.formData();
+    const id = formData.get('id');
+    const result = await turso.execute({
+        sql: "UPDATE solicitudes SET estado = 'aceptado' WHERE id = ?",
+        args: [id],
+    });
+    
+}

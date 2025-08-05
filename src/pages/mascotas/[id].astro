@@ -190,63 +190,57 @@ if (!masc) {
             
 
             {btnuser && solicitante ? (
-                <div
-        id="adoptionModal"
-        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;"
-    >
-        <div
-            class="modal-content"
-            style="background: white; padding: 20px; border-radius: 8px; width: 400px;"
-        >
-            <h2>Confirmar Solicitud de Adopción</h2>
-            <p>
-                ¿Estás seguro de que deseas solicitar la adopción de **{
-                    masc.nombre_mascota
-                }**?
-            </p>
-            <p>
-                Dueño actual: {masc.nombre_usuario}
-                {masc.apellido_usuario}
-            </p>
-            <p>Correo del responsable: {masc.correo_usuario}</p>
+                <div id="adoptionModal"
+                    style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
+                    <div class="modal-content"
+                        style="background: white; padding: 20px; border-radius: 8px; width: 400px;">
+                        <h2>Confirmar Solicitud de Adopción</h2>
+                            <p>
+                             ¿Estás seguro de que deseas solicitar la adopción de **{
+                                masc.nombre_mascota}**?
+                            </p>
+                            <p>
+                                Dueño actual: {masc.nombre_usuario}
+                                {masc.apellido_usuario}
+                            </p>
+                            <p>Correo del responsable: {masc.correo_usuario}</p>
 
-            <form id="adoptionForm">
-                <input
-                    type="hidden"
-                    name="id_mascota"
-                    value={masc.mascota_id}
-                />
-                <input
-                    type="hidden"
-                    name="id_responsable"
-                    value={masc.usuario_id}
-                />
-                <input
-                    type="hidden"
-                    name="nombre_usuario"
-                    value={masc.nombre_usuario}
-                />
-                <input
-                    type="hidden"
-                    name="id_solicitante"
-                    value={solicitante?.id}
-                />
-                <input
-                    type="hidden"
-                    name="nombre_solicitante"
-                    value={solicitante?.nombre}
-                />
+                            <form id="adoptionForm">
+                                <input
+                                    type="hidden"
+                                    name="id_mascota"
+                                    value={masc.mascota_id}
+                                />
+                                <input
+                                    type="hidden"
+                                    name="id_responsable"
+                                    value={masc.usuario_id}
+                                />
+                                <input
+                                    type="hidden"
+                                    name="nombre_usuario"
+                                    value={masc.nombre_usuario}
+                                />
+                                <input
+                                    type="hidden"
+                                    name="id_solicitante"
+                                    value={solicitante?.id}
+                                />
+                                <input
+                                    type="hidden"
+                                    name="nombre_solicitante"
+                                    value={solicitante?.nombre}
+                                />
 
-                <button type="submit" class="btn btn-success">Confirmar</button>
-                <button
-                    type="button"
-                    id="closeModalBtn"
-                    class="btn btn-secondary">Cancelar</button
-                >
-            </form>
-            <div id="formStatus" style="margin-top: 10px; color: red;"></div>
-        </div>
-    </div>
+                                <button type="submit" class="btn btn-success">Confirmar</button>
+                                <button
+                                    type="button"
+                                    id="closeModalBtn"
+                                    class="btn btn-secondary">Cancelar</button>
+                            </form>
+                            <div id="formStatus" style="margin-top: 10px; color: red;"></div>
+                    </div>
+                </div>
 
             ) : ( 
                 <></>
@@ -258,9 +252,6 @@ if (!masc) {
              para utilizar un modal y no redirigir debe hacerse con js del lado del cliente y se utiliza con fetch, en este caso obtenemos los datos directamente de esta pagina sin recargar --> */}
         </div>
     </div>
-    
-
-
     
 
     <script

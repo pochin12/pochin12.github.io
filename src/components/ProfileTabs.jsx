@@ -1,4 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import MisDatos from "./MisDatos";
+import PublicarMascotaForm from "./PublicarMascotaForm";
+import SolicitudesAdopcion from "./SolicitudesAdopcion";
+import SeguimientoAdoptados from './SeguimientoAdoptados';
+
+
 const ProfileTabs = ({ userEmail }) => {
     const [activeTab, setActiveTab] = useState('misDatos');
     const [data, setData] = useState(null);
@@ -18,6 +24,7 @@ const ProfileTabs = ({ userEmail }) => {
         setData(null);//limpiar los datos anteriores
         try {
             let endpoint = '';
+            //swith peticion datos, logica llamada api
             switch (tab) {
                 case 'misDatos':
                     endpoint = `/api/perfil/get-usuario?userEmail=${userEmail}`;
@@ -46,9 +53,11 @@ const ProfileTabs = ({ userEmail }) => {
                     return;
                     
             }
+            console.log(`[ProfileTabs] Fetching data for tab: ${tab} from endpoint: ${endpoint}`);
             if (endpoint) {
                 const response = await fetch(endpoint);
                 const json = await response.json();
+                console.log(`[ProfileTabs] Received JSON for tab ${tab}:`, json);
                 setData(json);
                 if (!response.ok) {
                     if (response.status === 404 && json.error === 'Usuario no encontrado en la base de datos.') {
@@ -70,46 +79,72 @@ const ProfileTabs = ({ userEmail }) => {
                 
             }
         } catch (err) {
-            setError(err.message || 'Error al cargar los datos-.');
-            console.error("error fetching data for tab:", tab, err);
+            console.error(`[ProfileTabs] Error fetching data for tab ${tab}:`, err);
+            setError(err.message || 'Error desconocido.');
         } finally {
             setLoading(false);
         }
     };
     //cargar datos cuanto la pestaña activa cambie
-    useEffect(() => {
-        fetchData(activeTab);
-    }, [activeTab, userEmail]); // useremail como dependencia si es parte del endpoint
+     // useremail como dependencia si es parte del endpoint
 
     // Handler para el cambio en el select
-    const handleSelectChange = (event) => {
-        setActiveTab(event.target.value);
-    };
+    //esto quedo creo q no es necesario
+    // const handleSelectChange = (event) => {
+    //     setActiveTab(event.target.value);
+    // };
+    useEffect(() => {
+        fetchData(activeTab);
+    }, [activeTab, userEmail]);
 
+    const renderizarContenido = () => {
+        console.log(`[ProfileTabs] Rendering content for tab: ${activeTab}. Current data state:`, data);
+        if (loading) return <p>cargando datos...</p>;
+        if (error) return <p className='text-danger'>Error: {error}</p>
+
+        //swith para renderizado de datos, logica UI
+        switch (activeTab) {
+            case 'misDatos':
+                return <MisDatos client:load data={data} />;
+            case 'publicarMascota':
+                return <PublicarMascotaForm />;
+            case 'adopciones':
+                return <SeguimientoAdoptados client:load data={data} />;
+            case 'solicitudesAdopcion':
+                return <SolicitudesAdopcion client:load data={data} />;
+            case 'mensajes':
+                return <p>No hay mensajes para mostrar</p>
+                
+                break;
+        
+            default:
+                break;
+        };
+    };
+    
+    
     return (
-        <div className="containter-fluid">
-            {/* <select
-                className="form-select form-select-sm mb-3 w-auto" // Clases de Bootstrap para estilo
-                aria-label="Selecciona una opción de perfil"
-                value={activeTab} // El valor seleccionado refleja el estado activeTab
-                onChange={handleSelectChange} // Actualiza activeTab cuando se selecciona una opción
-                
-            >
-                <option className="" value="misDatos">Mis Datos</option>
-                <option value="publicarMascota">Publicar para adoptar</option>
-                <option value="adopciones">Adoptados para seguimiento</option>
+        
+        <div className="container-fluid">
+            {/* <select className="form-select" value={activeTab} onChange={(e) => setActiveTab(e.target.value)}>
+                <option value="misDatos">Mis Datos</option>
+                <option value="publicarMascota">Publicar Mascota</option>
+                <option value="adopciones">Mis Adopciones</option>
+                <option value="solicitudesAdopcion">Solicitudes de Adopción</option>
                 <option value="mensajes">Mensajes</option>
-                <option value="solicitudesAdopcion">Solicitudes de adopción</option>
-            </select> */}
+            </select>
+            <div className="mt-4 p-3 border rounded">
+                {renderizarContenido()}
+            </div> */}
             <div className="dropdown">
-                
+
                 <button disabled={!activado}
                     className="btn btn-sueccess dropdown-toggle" // Clases de Bootstrap para el botón
                     type="button"
                     id="profileDropdown" // Un ID único para el botón
                     data-bs-toggle="dropdown"
                     aria-expanded="false"
-                    
+
                 >
                     {/* Muestra el texto de la pestaña activa o un texto por defecto */}
                     {
@@ -171,209 +206,7 @@ const ProfileTabs = ({ userEmail }) => {
                 </ul>
             </div>
             <div className="mt-4 p-3 border rounded">
-                {loading && <p>Cargando datos...</p>}
-                {/* {error && <p className="text-danger">Error: {error}</p>} */}
-                {error === 'USUARIO_NO_ENCONTRADO' ? (
-                    <div className="alert alert-info" role="alert">
-                        <p>Usuario no encontrado en la base de datos.</p>
-                        <p>¿Deseas registrar tus datos para poder gestionar tus mascotas y adopciones?</p>
-                        {/* Aquí puedes añadir un botón o un enlace a un formulario de registro */}
-                        <button className="btn btn-primary mt-2" onClick={() => setActiveTab('registrarUsuario')}>
-                            Registrarme
-                        </button>
-                    </div>
-                ) : error && (
-                    <p className="text-danger">Error: {error}</p>
-                )}
-                {!loading && !error && data && (
-                    <div>
-                        {activeTab === 'misDatos' && (
-                            <div>
-                                <h4>Mis datos de perfil</h4>
-                                {/* CORRECCIÓN: Los datos de usuario vendrán de tu endpoint, no de data.user directamente si el endpoint retorna un objeto con 'usuarios' */}
-                                {/* Necesitarás adaptar cómo accedes a los datos si el endpoint devuelve { usuarios: [{...}] } */}
-                                {/* <pre>{JSON.stringify(data, null, 2)}</pre> */}
-                                
-                                
-                                {data.usuarios && data.usuarios.length > 0 ? (
-                                    <>
-                                        {data.usuarios.map(item => (
-                                            <div key={item.id}>
-                                            <div class="form-floating">
-                                            <input type="text" class="form-control" id="nombre" placeholder='nombre' value={item.nombre}></input>
-                                            <label for="nombre">Nombre:</label>
-                                        </div>
-                                        <div class="form-floating">
-                                            <input type="text" class="form-control" id="apellido" placeholder='ingrese' value={item.apellido} ></input>
-                                            <label for="apellido">Apellido:</label>
-                                        </div>
-                                        <div class="form-floating">
-                                            <input type="email" class="form-control" id="correo" placeholder="correo" value={item.correo} disabled required />
-                                            <label for="correo">Correo</label>
-                                        </div>
-
-                                        <div class="form-floating">
-                                            <input type="number" class="form-control" id="telefono" placeholder='telefono' value={item.telefono}></input>
-                                            <label for="telefono">Telefono:</label>
-                                                </div>
-                                            </div>
-                                        ))}
-                                        
-                                        
-                                    </>
-                                ):(
-                                    <p>hola</p>
-                                )}
-                            </div>
-                        )}
-                        {activeTab === 'publicarMascota' && (
-                            <div>
-                                <h5>Cargar datos de mascota para adopción</h5>
-                                
-                                <form action="/api/perfil/post-mascota" method="POST">
-                
-                                    <div class="form-floating">
-                                        <input type="text" class="form-control" id="nombre" placeholder='ingrese' name="nombre"></input>
-                                        <label for="nombre">Nombre:</label>
-                                    </div>
-                                    <div className="form-floating">
-                                        <select class="form-select mb-3 w-75" id="tipo" name="tipo">
-                                            <option value="perro">Perro</option>
-                                            <option value="gato">Gato</option>
-
-                                        </select>
-                                        <label for="tamano">Tipo de mascota</label>
-                                    </div>
-                                    <div class="form-floating">
-                                        <input type="text" class="form-control" id="color" name="color" placeholder='arena'></input>
-                                        <label for="color">Color:</label>
-                                    </div>  
-                                    <div className="form-floating">
-                                        <input type="number" class="form-control" id="edad" name="edad" placeholder='edad' />
-                                        <label for="edad">Edad:</label>
-                                    </div>
-                                    <div className="form-floating">
-                                        <select class="form-select mb-3 w-75" id="tamano" name="tamano">
-                                            <option value="chico">Chico</option>
-                                            <option value="mediano">Mediano</option>
-                                            <option value="grande">Grande</option>
-                                        </select>
-                                        <label for="tamano">Seleccione el tamaño</label>
-                                    </div>
-                                    <div className="form-floating">
-                                        <select class="form-select mb-3 w-75" id="sexo" name="sexo">
-                                            <option value="">Seleccione una</option>
-                                            <option value="M">Macho</option>
-                                            <option value="H">Hembra</option>
-                                            
-                                        </select>
-                                        <label for="sexo">Sexo:</label>
-                                    </div>
-                                    <div class="form-floating border-success">
-                                        <input type="text" class="form-control" id="castrado" name="castrado" placeholder=''></input>
-                                        <label for="castrado">Castrado: si-no</label>
-                                    </div>
-                                    <div class="form-floating border-success">
-                                        <input type="text" class="form-control" id="imagen" name="imagen" placeholder='imagen'></input>
-                                        <label for="imagen">Imagen</label>
-                                    </div>
-                                    <div class="form-floating">
-                                        <textarea type="text" class="form-control" id="descripcion" name="descripcion" placeholder=''></textarea>
-                                        <label for="descripcion">Descripción:</label>
-                                    </div>
-
-                                    <button type="submit">Publicar mascota</button>
-                                </form>
-                                <p>{data.message}</p>
-                            </div>
-                        )}
-                        {activeTab === "adopciones" && (
-                            <div>
-                                <h4>Adopciones para seguimiento</h4>
-                                {data.adopciones && data.adopciones.length > 0 ? (
-                                    <ul>
-                                        {data.adopciones.map(item => (
-                                            <li key={item.id}>Adopción de {item.fecha_solicitud} ({item.estado})</li>
-                                        ))}
-                                    </ul>
-                                ) : (
-                                    <p>No tienes adopciones registradas.</p>
-                                )}
-                            </div>
-                        )}
-                        {activeTab === 'solicitudesAdopcion' && (
-                            <div>
-                                <h4>Solicitudes de adopción</h4>
-                                {/* <pre>{JSON.stringify(data, null, 2)}</pre> */}
-                                    {data.solicitudes && data.solicitudes.length > 0 ? (
-                                    //  <ul>
-                                    //     {data.solicitudes.map(item => (
-                                    //         <li key={item.id}>Solicitud para {item.fecha_solicitud} solicitante: {item.nombre_solicitante}({item.estado})</li>
-                                    //     ))}
-                                    //     </ul>                                    
-                                    <div class="container-fluid pt-3" style={{ overflowX: 'auto' }}>
-                                        <table class="table table-hover"
-                                        >
-                                            <thead>
-                                                <tr>
-                                                    <th scope="col">#</th>
-                                                    <th scope="col">Solicitante</th>
-                                                    <th scope="col">Mascota</th>
-                                                    <th scope="col">Fecha solicitud</th>
-                                                    <th scope="col">Estado</th>
-                                                    <th scope="col">Aceptado</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {data.solicitudes.map(item => (
-                                                    <tr key={item.id}>
-                                                        <th scope="">{item.id}</th>
-                                                        <td>{item.nombre_solicitante}</td>
-                                                        <td>{item.id_mascota}</td>
-                                                        <td>{item.fecha_solicitud}</td>
-                                                        <td>{item.estado}</td>
-                                                        <td><button type="button" class="btn btn-outline-danger">X</button>
-                                                            <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#exampleModal">v</button>
-                                                        </td>
-                                                    </tr>
-                                                ))
-                                                }
-            
-                                            </tbody>
-                                        </table>
-                                        
-
-                                        
-                                        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog">
-                                                <div class="modal-content">
-                                                    {/* <form action="/api/post-adopcion" method="POST"></form> */}
-                                                    <div class="modal-header">
-                                                        <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <p>Desea aceptar esta solicitud de adopción? Se quitará de esta lista y podra ver en la sección de adopciones para seguimiento </p>
-                                                        ...
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                        <button type="button" class="btn btn-primary">Aceptar solicitud</button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                ) : (
-                                    <p>No tienes solicitudes de adopción pendientes.</p>
-                                )}
-
-                            </div>
-                        )}
-                        {/*  añade mas condiciones para otras pestañas */}
-                    </div>
-                )}
+                {renderizarContenido()}
             </div>
         </div>
     );
