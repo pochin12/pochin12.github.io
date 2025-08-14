@@ -1,5 +1,6 @@
 import React from "react";
 
+
 const PublicarMascotaForm = () => {
     return (
         <div>
@@ -55,6 +56,10 @@ const PublicarMascotaForm = () => {
                 <div>
                     <label for="descripcion">Descripcion:</label>
                     <textarea id="descripcion" name="descripcion" required></textarea>
+                </div>
+                <div>
+                    <label for="imagen">Formulario a completar</label>
+                    <input type="text" id="formulario" name="formulario" placeholder='formulario'></input>
                 </div>
 
                 <button type="submit">Publicar mascota</button>

@@ -18,7 +18,7 @@ export const GET: APIRoute = async ({ request }) => {
     
     try {
         const result = await turso.execute({
-            sql: 'select id, nombre, apellido, correo, telefono from usuarios where correo = ?',
+            sql: 'select id, nombre, apellido, correo, telefono, tipo from usuarios where correo = ?',
             args: [email],
         })
     

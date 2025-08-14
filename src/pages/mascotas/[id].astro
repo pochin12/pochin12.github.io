@@ -119,22 +119,21 @@ if (!masc) {
 ---
 
 <Layout title={"Detalles de ${masc.nombre_mascota}"}>
-    <!-- <form action="/api/solicitudes" method="POST">
+    {/* <form action="/api/solicitudes" method="POST">
         <input type="hidden" name="id_mascota" value={masc.mascota_id} />
 
-        <input type="hidden" name="id_usuario" value={masc.nombre_usuario} />
+        <input type="hidden" name="id_usuario" value={masc.nombre_usuario} /> */}
         {/* EJEMPLO: ESTO ES INSEGURO SI NO HAY AUTENTICACIÓN */}
 
-        <p>
+        {/* <p>
             ¿Estás seguro de que deseas solicitar la adopción de esta mascota?
         </p>
         <button type="submit" class="btn btn-success"
-            >Confirmar Solicitud</button
-        >
+            >Confirmar Solicitud</button>
         <a href={`/mascotas/${masc.mascota_id}`} class="btn btn-secondary"
             >Cancelar</a
         >
-    </form> -->
+    </form> */}
 
     <div class="container my-4">
         <div class="card p-4 shadow-sm">
@@ -171,6 +170,13 @@ if (!masc) {
                 <strong>Edad:</strong>
                 {masc.edad}
             </div>
+            <div class="mb-3">
+                <strong>Formulario de requisitos:</strong>
+                <a href="https://forms.gle/vjnwu4bUnEFaCVKZ8">https://forms.gle/vjnwu4bUnEFaCVKZ8</a>                
+            </div>
+            
+        
+
             <!-- {(btnsolicitud && btnuser )? (
                 <div class="alert alert-warning alert-dimissible fade show" role="alert"><strong>Debe registrarse para cargar mascotas o solicitar adopciones</strong><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>
             ):(<></>)} -->

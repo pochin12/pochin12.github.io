@@ -3,19 +3,35 @@ import Layoutmenu from "../layout/Layoutmenu.astro";
 import ProfileTabs from "../components/ProfileTabs";
 import { getSession } from "auth-astro/server";
 import { turso } from "../turso";
+import type { IntegrationResolvedRoute } from "astro";
 const session = await getSession(Astro.request);
-if (!session) {
+
+let tipousuario = '';
+let usuarioid = 0;
+let userEmail = '';
+
+if (session) {
+    userEmail = session.user?.email;
+    try {
+        const result = await turso.execute({
+            sql: "select id, tipo from usuarios where correo = ?",
+            args: [userEmail],
+        });
+        if (result.rows.length > 0) {
+            tipousuario = result.rows[0].tipo as string;
+            usuarioid = result.rows[0].id as number;
+        }
+
+    } catch {
+        console.error('Error al obtener el tipo de usuario:', e);
+    }
+} else {
     return Astro.redirect("/");
 }
-const correo = session.user?.email;
-const result = await turso.execute({
-    sql: "select id from usuarios where correo = ?",
-    args: [correo],
-});
-console.log(result.rows.length > 0);
+
 ---
 
-<Layoutmenu>
+<Layoutmenu userEmail={userEmail}>
     <!--//si trabajo con paginas, primer formato hecho 
     <div class="container-fluid">
         <div class="d-grid gap-3 col-8 mx-auto m-3">
@@ -46,8 +62,8 @@ console.log(result.rows.length > 0);
     </div> -->
 
     {
-        result.rows.length > 0 ? (
-            <ProfileTabs client:load userEmail={session.user?.email} />
+        (usuarioid > 0) ? (
+            <ProfileTabs client:load userEmail={userEmail} tipousuario={tipousuario} />
         ) : (
             //userEmail nombre de la prop que le paso al componente ProfileTabs
             //comp padre astro envia al hijo react
@@ -82,4 +98,5 @@ console.log(result.rows.length > 0);
     </div>
         )
     }
+    
 </Layoutmenu>

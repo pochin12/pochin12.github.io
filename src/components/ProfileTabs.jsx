@@ -5,7 +5,15 @@ import SolicitudesAdopcion from "./SolicitudesAdopcion";
 import SeguimientoAdoptados from './SeguimientoAdoptados';
 
 
-const ProfileTabs = ({ userEmail }) => {
+// 
+// const tipousuario = await turso.execute({
+//     sql: 'select id from usuarios where correo = ?',
+//     args: [sesion],
+// });
+
+
+
+const ProfileTabs = ({ userEmail, tipousuario}) => {
     const [activeTab, setActiveTab] = useState('misDatos');
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -15,6 +23,8 @@ const ProfileTabs = ({ userEmail }) => {
     // const manejarBoton = () => {
     //     setActivado(!activado);
     // };
+
+
 
 
     //cargar segun pestaña activa
@@ -107,7 +117,14 @@ const ProfileTabs = ({ userEmail }) => {
             case 'misDatos':
                 return <MisDatos client:load data={data} />;
             case 'publicarMascota':
-                return <PublicarMascotaForm />;
+                if (tipousuario === 'ong') {
+                    return <PublicarMascotaForm />;
+                } else {
+                    return <p> Esta opcion solo esta disponible 
+                 para rescatistas o fundaciones no para usuarios particulares</p>
+                };
+            
+                // return <PublicarMascotaForm />;
             case 'adopciones':
                 return <SeguimientoAdoptados client:load data={data} />;
             case 'solicitudesAdopcion':

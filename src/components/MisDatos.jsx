@@ -28,6 +28,10 @@ const MisDatos = ({ data }) => {
                 <input type="number" class="form-control" id="telefono" placeholder='telefono' value={usuario.telefono} disabled></input>
                 <label for="telefono">Telefono:</label>
             </div>
+            <div class="form-floating">
+                <input type="text" class="form-control" id="tipo" placeholder='tipo' value={usuario.tipo} disabled></input>
+                <label for="tipo">Tipo de usuario:</label>
+            </div>
             <button className="btn btn-secondary mt-2">Editar Datos</button>
         </div>
     );

@@ -45,6 +45,7 @@ export const POST: APIRoute = async ({ request, redirect }) => {
         //const id_usuario = formData.get('id_usuario');
         const imagen = formData.get('imagen');
         const castrado = formData.get('castrado');
+        const formulario = formData.get('castrado');
 
         await turso.execute({
             sql: "insert into mascotas (nombre, tipo, color, tamano, edad, sexo, descripcion, id_u, imagen, castrado) VALUES (?,?,?,?,?,?,?,?,?,?)",
