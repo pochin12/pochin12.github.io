@@ -96,7 +96,14 @@ const ProfileTabs = ({ userEmail, tipousuario}) => {
         }
     };
     //cargar datos cuanto la pestaña activa cambie
-     // useremail como dependencia si es parte del endpoint
+    // useremail como dependencia si es parte del endpoint
+    
+
+    //nueva funcion para recargar la tabla solicitudes
+    const handleRefresh = () => {
+        //llama a fetchdata de nuevo con la pestaña actual
+        fetchData(activeTab);
+    };
 
     // Handler para el cambio en el select
     //esto quedo creo q no es necesario
@@ -128,7 +135,8 @@ const ProfileTabs = ({ userEmail, tipousuario}) => {
             case 'adopciones':
                 return <SeguimientoAdoptados client:load data={data} />;
             case 'solicitudesAdopcion':
-                return <SolicitudesAdopcion client:load data={data} />;
+                return <SolicitudesAdopcion client:load data={data} onRefresh={handleRefresh} />;
+            //agregamos onrefresh handlerefresh para refrescar cuando se actualiza
             case 'mensajes':
                 return <p>No hay mensajes para mostrar</p>
                 

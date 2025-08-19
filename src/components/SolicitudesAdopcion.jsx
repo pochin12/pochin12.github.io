@@ -1,26 +1,38 @@
 import React, { useState } from 'react';
 
-const SolicitudesAdopcion = ({ data }) => {
+const SolicitudesAdopcion = ({ data, onRefresh }) => {
     
     const [abrirModal, setAbrirModal] = useState(false);
     const [aceptarSolicitud, setAceptarSolicitud] = useState(null);
     const [actualizarEstado, setActualizarEstado] = useState(false);
     const [errorActualizar, setErrorActualizar] = useState(null);
 
+    const API_KEY = 'AIzaSyAhQLnBwbcE-JikOK7pLEeoAAXU7G8hWHE';
+    const SPREADSHEET_ID = '1RgJkkeOqzI_qdqrN9EKbn-BXvdBFenmrn6SA3ojruow';
+    const RANGE = 'mascotas!A:I';
+
     async function obtenerFormularioPorCorreo(correo) {
         try {
-            const response = await gapi.client.sheets.spreadsheets.values.get({
-                spreadsheetId: "1RgJkkeOqzI_qdqrN9EKbn-BXvdBFenmrn6SA3ojruow",
-                range: "mascotas!A:G",
-            });
+            // const response = await gapi.client.sheets.spreadsheets.values.get({
+            //     spreadsheetId: "1RgJkkeOqzI_qdqrN9EKbn-BXvdBFenmrn6SA3ojruow",
+            //     range: "mascotas!A:G",
+            // });
+            //estaba para autorizar api en la guia de google shet javascript
 
-            const values = response.result.values;
+            //parte nueva
+            const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${RANGE}?key=${API_KEY}`;
+
+            const response = await fetch(url);
+            const data = await response.json();
+            const values = data.values;
+            //const values = response.result.values;
 
             if (!values || values.length < 2) return null;
 
             const headers = values[0];
             const dataRows = values.slice(1);
-            const fila = dataRows.find((row) => row[1] === correo); // Suponiendo columna B es el correo
+            const fila = dataRows.find((row) => row[2] === correo); // Suponiendo columna B es el correo
+            console.log(fila)
 
             if (!fila) return null;
 
@@ -36,6 +48,7 @@ const SolicitudesAdopcion = ({ data }) => {
     const [formularioActual, setFormularioActual] = useState(null);
 
     async function verFormulario(correo) {
+        
         const datos = await obtenerFormularioPorCorreo(correo);
         if (datos) {
             setFormularioActual(datos);
@@ -62,6 +75,16 @@ const SolicitudesAdopcion = ({ data }) => {
         setErrorActualizar(null);
 
         try {
+            //paso 1 encontrar solicitudes para la misma mascota
+            const solicitudesRechazadas = solicitudes.filter(s =>
+                s.id_mascota === aceptarSolicitud.id_mascota &&
+                s.estado === 'pendiente' &&
+                s.id !== aceptarSolicitud.id
+            );
+            const idsRechazo = solicitudesRechazadas.map(s => s.id);
+
+            //actualizar la actual     
+
             const response = await fetch('/api/solicitudes/update-estado', {
                 method: "POST",
                 headers: {
@@ -80,8 +103,27 @@ const SolicitudesAdopcion = ({ data }) => {
             if (!response.ok) {
                 throw new Error(result.error || 'Error al actualizar estado.');
             }
-            alert(result.message);
-            window.location.reload;
+
+            const res = await fetch('/api/solicitudes/rechazar-multiples', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ids: idsRechazo }),
+            });
+            const recha = await res.json();
+
+            //paso 3: mostrar correos para informar el rechazo
+            //despues se tratara logica si es por msj o wpp
+
+            if (solicitudesRechazadas.length > 0) {
+                const correos = solicitudesRechazadas.map(s => s.correo).join('\n');
+                alert(`Solicitud aceptada. \n\n Debes notificar a estos correos:\n\n${correos}`);
+            } else {
+                alert('Solicitud aceptada.')
+            }
+            
+            //window.location.reload; quitamos para q ahora si actualice
+            onRefresh();//se llama a la funcion deel padre
+            handleCerrarModal();
         } catch (error) {
             console.error('Error al aceptar la solicitud:', error);
             setErrorActualizar(error.message);
@@ -123,6 +165,7 @@ const SolicitudesAdopcion = ({ data }) => {
                                 <td>{item.estado === 'pendiente' && (
                                     <button className="btn btn-sm btn-success" onClick={() => handleAbrirModal(item)} disabled={actualizarEstado}>Aceptar</button>
                                 )}</td>
+                                
                                 <td>
                                     <button onClick={() => verFormulario(item.correo)}>Ver Formulario</button>
                                 </td>

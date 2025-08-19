@@ -34,7 +34,7 @@ export const GET: APIRoute = async ({ request }) => {
         }
 
         const result = await turso.execute({
-            sql: 'select id, id_mascota, nombre_responsable, fecha_solicitud, estado, nombre_solicitante from solicitudes where id_responsable = ?',
+            sql: 'select id, id_mascota, nombre_responsable, fecha_solicitud, estado, nombre_solicitante, correo from solicitudes where id_responsable = ?',
             args: [userId],
 
         });
